@@ -1,0 +1,129 @@
+{% extends "usuarios/base.html" %}
+{% load static %}
+
+{% block title %}Crear Usuario{% endblock %}
+
+{% block content %}
+<div class="container py-5 d-flex justify-content-center align-items-center" style="min-height: 100vh;">
+  <div class="col-md-10 col-lg-8">
+
+    <!-- Logos -->
+    <div class="d-flex justify-content-center align-items-center mb-4">
+      <img src="{% static 'img/logofiscalia.png' %}" alt="Fiscalía" class="me-3" style="height: 60px;">
+      <img src="{% static 'img/logo_iq.png' %}" alt="IQ Outsourcing" style="height: 45px;">
+    </div>
+
+    {% if messages %}
+    {% for message in messages %}
+    <div class="alert alert-success alert-dismissible fade show animate__animated animate__fadeInDown" role="alert">
+      <i class="bi bi-check-circle-fill me-2"></i>{{ message }}
+      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Cerrar"></button>
+    </div>
+    {% endfor %}
+    {% endif %}
+
+    <div class="card shadow-lg rounded-4 border-0 bg-light animate__animated animate__fadeIn">
+      <div class="card-header bg-primary text-white text-center rounded-top-4">
+        <h5 class="mb-0"><i class="bi bi-person-plus me-2"></i>Crear Nuevo Usuario</h5>
+      </div>
+      <div class="card-body p-4">
+        <form method="post" id="crearUsuarioForm">
+          {% csrf_token %}
+
+          <div class="row g-3">
+            <div class="col-md-6">
+              <label for="username" class="form-label">Nombre de usuario</label>
+              <input type="text" name="username" class="form-control" id="username" required>
+            </div>
+
+            <div class="col-md-6">
+              <label for="email" class="form-label">Correo electrónico</label>
+              <input type="email" name="email" class="form-control" id="email" required>
+            </div>
+
+            <div class="col-md-6">
+              <label for="first_name" class="form-label">Nombres</label>
+              <input type="text" name="first_name" class="form-control" id="first_name" required>
+            </div>
+
+            <div class="col-md-6">
+              <label for="last_name" class="form-label">Apellidos</label>
+              <input type="text" name="last_name" class="form-control" id="last_name" required>
+            </div>
+
+            <div class="col-md-6">
+              <label for="password" class="form-label">Contraseña</label>
+              <input type="password" name="password" class="form-control" id="password" required>
+            </div>
+
+            <div class="col-md-6">
+              <label for="confirm_password" class="form-label">Confirmar Contraseña</label>
+              <input type="password" name="confirm_password" class="form-control" id="confirm_password" required>
+              <div id="passwordHelp" class="form-text text-danger d-none">Las contraseñas no coinciden.</div>
+            </div>
+
+            <div class="col-md-6">
+              <label for="rol" class="form-label">Rol</label>
+              <select class="form-select" id="rol" name="rol" required>
+                <option value="" disabled selected>Seleccione un rol</option>
+                {% for grupo in grupos %}
+                <option value="{{ grupo.name }}">{{ grupo.name|capfirst }}</option>
+                {% endfor %}
+              </select>
+            </div>
+
+            <div class="col-md-4">
+              <label class="form-label">¿Es Activo?</label>
+              <select name="is_active" class="form-select">
+                <option value="True">Sí</option>
+                <option value="False">No</option>
+              </select>
+            </div>
+
+            <div class="col-md-4">
+              <label class="form-label">¿Es Staff?</label>
+              <select name="is_staff" class="form-select">
+                <option value="True">Sí</option>
+                <option value="False">No</option>
+              </select>
+            </div>
+
+            <div class="col-md-4">
+              <label class="form-label">¿Es Superusuario?</label>
+              <select name="is_superuser" class="form-select">
+                <option value="True">Sí</option>
+                <option value="False">No</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="d-grid mt-4">
+            <button type="submit" class="btn btn-outline-primary">
+              <i class="bi bi-person-plus me-1"></i>Crear Usuario
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <div class="text-center mt-3">
+      <small class="text-muted">© Fiscalía General de la Nación - IQ Outsourcing - {{ now|date:"Y" }}</small>
+    </div>
+  </div>
+</div>
+
+<script>
+  document.getElementById('crearUsuarioForm').addEventListener('submit', function (e) {
+    const password = document.getElementById('password').value;
+    const confirm = document.getElementById('confirm_password').value;
+    const help = document.getElementById('passwordHelp');
+
+    if (password !== confirm) {
+      e.preventDefault();
+      help.classList.remove('d-none');
+    } else {
+      help.classList.add('d-none');
+    }
+  });
+</script>
+{% endblock %}

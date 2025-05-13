@@ -13,11 +13,11 @@ def home_redirect_view(request):
     if request.user.is_authenticated:
         return redirect('home')  
     else:
-        return render(request, 'usuarios/login.html')
+        return render(request, 'usuarios/auth/login.html')
 
     
 def index(request):
-    return render(request, 'usuarios/login.html')
+    return render(request, 'usuarios/auth/login.html')
 
 
 
@@ -42,7 +42,7 @@ def login_view(request):
                 return redirect('dashboard_supervisor')
             elif user.groups.filter(name='agente').exists():
                 return redirect('dashboard_agente')
-    return render(request, 'usuarios/login.html', {'form': form})
+    return render(request, 'usuarios/auth/login.html', {'form': form})
 
 @login_required
 def logout_view(request):
@@ -67,20 +67,42 @@ def dashboard_admin(request):
 @login_required
 @en_grupo('administrador')
 def crear_usuario(request):
-    if request.method == 'POST':
-        username = request.POST.get('username')
-        password = request.POST.get('password')
-        rol = request.POST.get('rol')
-        
-        if username and password and rol:
-            user = User.objects.create_user(username=username, password=password)
-            grupo = Group.objects.get(name=rol)
-            user.groups.add(grupo)
-            messages.success(request, 'Usuario creado exitosamente')
-            return redirect('crear_usuario')
-    grupos = Group.objects.exclude(name='administrador')
-    return render(request, 'usuarios/crear_usuario.html', {'grupos': grupos})
+    grupos = Group.objects.all()
+    if request.method == "POST":
+        username = request.POST["username"]
+        email = request.POST["email"]
+        password = request.POST["password"]
+        confirm = request.POST["confirm_password"]
+        first_name = request.POST["first_name"]
+        last_name = request.POST["last_name"]
+        rol = request.POST["rol"]
+        is_active = request.POST.get("is_active") == "True"
+        is_staff = request.POST.get("is_staff") == "True"
+        is_superuser = request.POST.get("is_superuser") == "True"
 
+        if password != confirm:
+            messages.error(request, "Las contraseñas no coinciden.")
+            return render(request, "usuarios/crear_usuario.html", {"grupos": grupos})
+
+        if User.objects.filter(username=username).exists():
+            messages.error(request, "El nombre de usuario ya existe.")
+            return render(request, "usuarios/crear_usuario.html", {"grupos": grupos})
+
+        user = User.objects.create_user(username=username, email=email, password=password)
+        user.first_name = first_name
+        user.last_name = last_name
+        user.is_active = is_active
+        user.is_staff = is_staff
+        user.is_superuser = is_superuser
+        user.save()
+
+        grupo = Group.objects.get(name=rol)
+        user.groups.add(grupo)
+
+        messages.success(request, "Usuario creado exitosamente.")
+        return redirect("crear_usuario")
+
+    return render(request, "usuarios/auth/crear_usuario.html", {"grupos": grupos})
 @login_required
 def reportes_view(request):
     from .models import Tipificacion
