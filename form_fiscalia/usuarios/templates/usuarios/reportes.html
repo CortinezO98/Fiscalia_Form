@@ -1,0 +1,29 @@
+{% extends 'usuarios/base.html' %}
+{% block content %}
+<h1 class="title">Reportes</h1>
+<form method="GET">
+    <label>Desde:</label><input type="date" name="fecha_inicio">
+    <label>Hasta:</label><input type="date" name="fecha_fin">
+    <button class="button is-info" type="submit">Filtrar</button>
+</form>
+
+<table class="table is-striped is-hoverable">
+    <thead>
+        <tr>
+            <th>Cédula</th>
+            <th>Tipificación</th>
+            <th>Fecha</th>
+            <!-- agrega más campos si deseas -->
+        </tr>
+    </thead>
+    <tbody>
+        {% for item in reportes %}
+        <tr>
+            <td>{{ item.cedula }}</td>
+            <td>{{ item.tipificacion }}</td>
+            <td>{{ item.fecha }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

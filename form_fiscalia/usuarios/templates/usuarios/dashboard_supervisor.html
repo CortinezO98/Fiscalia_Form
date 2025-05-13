@@ -1,0 +1,6 @@
+{% extends 'usuarios/base.html' %}
+{% block content %}
+<h1 class="title">Panel del Supervisor</h1>
+<p>Aquí puedes ver reportes generales y consultar historial.</p>
+<a href="{% url 'reportes' %}" class="button is-info">Ver Reportes</a>
+{% endblock %}

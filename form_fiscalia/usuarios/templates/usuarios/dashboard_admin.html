@@ -1,0 +1,63 @@
+{% extends 'base.html' %}
+
+{% block title %}Panel Administrador{% endblock %}
+
+{% block content %}
+<div class="d-flex">
+  <!-- Sidebar -->
+  <nav class="flex-column flex-shrink-0 p-3 text-white bg-dark" style="width: 250px; height: 100vh;">
+    <a href="#" class="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-white text-decoration-none">
+      <i class="bi bi-speedometer2 me-2"></i><span class="fs-4">Admin</span>
+    </a>
+    <hr>
+    <ul class="nav nav-pills flex-column mb-auto">
+      <li class="nav-item">
+        <a href="{% url 'dashboard_admin' %}" class="nav-link active text-white" aria-current="page">
+          <i class="bi bi-house-door me-2"></i>Inicio
+        </a>
+      </li>
+      <li>
+        <a href="{% url 'crear_usuario' %}" class="nav-link text-white">
+          <i class="bi bi-person-plus me-2"></i>Crear Usuario
+        </a>
+      </li>
+      <li>
+        <a href="#" class="nav-link text-white">
+          <i class="bi bi-file-earmark-text me-2"></i>Reportes
+        </a>
+      </li>
+    </ul>
+    <hr>
+    <div>
+      <a href="{% url 'logout' %}" class="btn btn-outline-light btn-sm"><i class="bi bi-box-arrow-right"></i> Cerrar sesión</a>
+    </div>
+  </nav>
+
+  <!-- Main Content -->
+  <div class="p-4 w-100">
+    <h2>Bienvenido, {{ user.username }}</h2>
+    <p class="text-muted">Desde aquí puedes gestionar usuarios y ver reportes del sistema.</p>
+
+    <div class="row">
+      <div class="col-md-6 mb-3">
+        <div class="card card-panel">
+          <div class="card-body">
+            <h5 class="card-title"><i class="bi bi-person-plus"></i> Crear Usuario</h5>
+            <p class="card-text">Crea nuevos usuarios y asigna sus roles.</p>
+            <a href="{% url 'crear_usuario' %}" class="btn btn-primary">Ir</a>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-6 mb-3">
+        <div class="card card-panel">
+          <div class="card-body">
+            <h5 class="card-title"><i class="bi bi-file-earmark-text"></i> Reportes</h5>
+            <p class="card-text">Consulta y exporta los reportes del sistema.</p>
+            <a href="#" class="btn btn-primary">Ver Reportes</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
