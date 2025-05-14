@@ -1,7 +1,214 @@
 {% extends 'usuarios/base.html' %}
 {% load static %}
+{% load humanize %}
+
 {% block content %}
-<h1 class="title">Panel del Supervisor</h1>
-<p>Aquí puedes ver reportes generales y consultar historial.</p>
-<a href="{% url 'reportes' %}" class="button is-info">Ver Reportes</a>
+<div class="container-fluid py-4">
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card shadow-lg border-0 rounded-3">
+                <div class="card-body p-4">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <div>
+                            <h1 class="h3 fw-bold text-primary mb-1">
+                                <i class="bi bi-speedometer2 me-2"></i>Panel del Supervisor
+                            </h1>
+                            <div class="d-flex align-items-center gap-2">
+                                <p class="text-muted mb-0">Bienvenido, {{ request.user.get_full_name|default:request.user.username }}</p>
+                                <span class="badge bg-primary bg-opacity-10 text-primary">
+                                    <i class="bi bi-patch-check-fill me-1"></i>Verificado
+                                </span>
+                            </div>
+                        </div>
+                        <div class="d-flex gap-2">
+                            <div class="badge bg-warning bg-opacity-10 text-warning p-2">
+                                <i class="bi bi-person-badge-fill me-2"></i>Supervisor
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Estadísticas Rápidas -->
+                    <div class="row g-4 mb-4">
+                        <div class="col-12 col-md-6 col-xl-3">
+                            <div class="card bg-primary bg-opacity-10 border-0 h-100">
+                                <div class="card-body">
+                                    <div class="d-flex align-items-center gap-3">
+                                        <div class="icon-square bg-primary text-white rounded-3 p-3">
+                                            <i class="bi bi-files fs-4"></i>
+                                        </div>
+                                        <div>
+                                            <h3 class="mb-0 fw-bold">{{ total_evaluaciones|intcomma }}</h3>
+                                            <small class="text-muted">Evaluaciones Totales</small>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-12 col-md-6 col-xl-3">
+                            <div class="card bg-success bg-opacity-10 border-0 h-100">
+                                <div class="card-body">
+                                    <div class="d-flex align-items-center gap-3">
+                                        <div class="icon-square bg-success text-white rounded-3 p-3">
+                                            <i class="bi bi-calendar-day fs-4"></i>
+                                        </div>
+                                        <div>
+                                            <h3 class="mb-0 fw-bold">{{ evaluaciones_hoy|intcomma }}</h3>
+                                            <small class="text-muted">Hoy</small>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-12 col-md-6 col-xl-3">
+                            <div class="card bg-info bg-opacity-10 border-0 h-100">
+                                <div class="card-body">
+                                    <div class="d-flex align-items-center gap-3">
+                                        <div class="icon-square bg-info text-white rounded-3 p-3">
+                                            <i class="bi bi-clock-history fs-4"></i>
+                                        </div>
+                                        <div>
+                                            <h3 class="mb-0 fw-bold">{{ eficiencia|floatformat:1 }}%</h3>
+                                            <small class="text-muted">Eficiencia</small>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-12 col-md-6 col-xl-3">
+                            <div class="card bg-purple bg-opacity-10 border-0 h-100">
+                                <div class="card-body">
+                                    <div class="d-flex align-items-center gap-3">
+                                        <div class="icon-square bg-purple text-white rounded-3 p-3">
+                                            <i class="bi bi-people fs-4"></i>
+                                        </div>
+                                        <div>
+                                            <h3 class="mb-0 fw-bold">{{ agentes_activos|intcomma }}</h3>
+                                            <small class="text-muted">Agentes Activos</small>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Acciones Principales -->
+                    <div class="row g-4">
+                        <div class="col-12 col-md-6 col-xl-4">
+                            <div class="card h-100 border-0 shadow-hover-lg transition-all">
+                                <div class="card-body p-4 text-center">
+                                    <div class="icon-shape icon-xl bg-gradient-info text-white rounded-4 mb-3 mx-auto">
+                                        <i class="bi bi-search fs-3"></i>
+                                    </div>
+                                    <h5 class="mb-2 fw-semibold">Buscar Tipificaciones</h5>
+                                    <p class="text-muted small mb-0">Búsqueda avanzada con múltiples filtros</p>
+                                </div>
+                                <div class="card-footer bg-transparent border-0 pt-0 pb-4 text-center">
+                                    <a href="{% url 'buscar_tipificacion' %}" class="btn btn-gradient-info px-4 py-2 rounded-3">
+                                        <i class="bi bi-search me-2"></i>Iniciar Búsqueda
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-12 col-md-6 col-xl-4">
+                            <div class="card h-100 border-0 shadow-hover-lg transition-all">
+                                <div class="card-body p-4 text-center">
+                                    <div class="icon-shape icon-xl bg-gradient-success text-white rounded-4 mb-3 mx-auto">
+                                        <i class="bi bi-bar-chart-line-fill fs-3"></i>
+                                    </div>
+                                    <h5 class="mb-2 fw-semibold">Reportes Analíticos</h5>
+                                    <p class="text-muted small mb-0">Estadísticas detalladas y gráficos interactivos</p>
+                                </div>
+                                <div class="card-footer bg-transparent border-0 pt-0 pb-4 text-center">
+                                    <a href="{% url 'reportes' %}" class="btn btn-gradient-success px-4 py-2 rounded-3">
+                                        <i class="bi bi-graph-up-arrow me-2"></i>Ver Dashboard
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-12 col-md-6 col-xl-4">
+                            <div class="card h-100 border-0 shadow-hover-lg transition-all">
+                                <div class="card-body p-4 text-center">
+                                    <div class="icon-shape icon-xl bg-gradient-primary text-white rounded-4 mb-3 mx-auto">
+                                        <i class="bi bi-file-earmark-plus fs-3"></i>
+                                    </div>
+                                    <h5 class="mb-2 fw-semibold">Nueva Evaluación</h5>
+                                    <p class="text-muted small mb-0">Registro manual de tipificaciones</p>
+                                </div>
+                                <div class="card-footer bg-transparent border-0 pt-0 pb-4 text-center">
+                                    <a href="{% url 'crear_evaluacion' %}" class="btn btn-gradient-primary px-4 py-2 rounded-3">
+                                        <i class="bi bi-plus-circle me-2"></i>Crear Registro
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Actividad Reciente -->
+    <div class="row mt-4">
+        <div class="col-12">
+            <div class="card shadow-lg border-0 rounded-3">
+                <div class="card-body p-4">
+                    <h5 class="fw-semibold mb-4">
+                        <i class="bi bi-clock-history me-2"></i>Actividad Reciente
+                    </h5>
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Usuario</th>
+                                    <th>Acción</th>
+                                    <th>Detalle</th>
+                                    <th>Hora</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for evaluacion in actividad_reciente %}
+                                <tr>
+                                    <td class="fw-semibold">{{ evaluacion.agente.get_full_name|default:evaluacion.agente.username }}</td>
+                                    <td>Nueva tipificación</td>
+                                    <td>Evaluación #{{ evaluacion.id }}</td>
+                                    <td>{{ evaluacion.fecha_creacion|timesince }}</td>
+                                    <td class="text-end">
+                                        <a href="{% url 'detalle_evaluacion' evaluacion.id %}" class="btn btn-sm btn-outline-primary">
+                                            Ver
+                                        </a>
+                                    </td>
+                                </tr>
+                                {% empty %}
+                                <tr>
+                                    <td colspan="5" class="text-center text-muted py-4">No hay actividad reciente</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Animación de hover para las tarjetas
+    document.querySelectorAll('.shadow-hover-lg').forEach(card => {
+        card.addEventListener('mouseenter', function() {
+            this.style.transform = 'translateY(-5px)';
+        });
+        card.addEventListener('mouseleave', function() {
+            this.style.transform = 'translateY(0)';
+        });
+    });
+});
+</script>
 {% endblock %}

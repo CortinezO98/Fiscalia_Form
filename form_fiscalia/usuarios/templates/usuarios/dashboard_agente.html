@@ -1,6 +1,227 @@
 {% extends 'usuarios/base.html' %}
 {% load static %}
+
 {% block content %}
-<h1 class="title">Panel del Agente</h1>
-<p>Bienvenido agente. Aquí podrás ver tus asignaciones o gestiones.</p>
+<div class="container-fluid py-4">
+    <div class="row">
+        <div class="col-12">
+            <div class="card shadow-sm border-0 rounded-3 mb-4">
+                <div class="card-body p-4">
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <div>
+                            <h2 class="h4 fw-semibold text-primary mb-1">Panel del Agente</h2>
+                            <p class="text-muted mb-0">Bienvenido, {{ request.user.get_full_name|default:request.user.username }}</p>
+                        </div>
+                        <div class="badge bg-primary bg-opacity-10 text-primary p-2">
+                            <i class="bi bi-person-badge me-2"></i>Agente
+                        </div>
+                    </div>
+
+                    <div class="row g-4">
+                        <!-- Crear Tipificación -->
+                        <div class="col-md-6">
+                            <div class="card h-100 border-0 shadow-sm transition-all hover-shadow-lg">
+                                <div class="card-body p-4 text-center">
+                                    <div class="icon-shape icon-lg bg-primary bg-opacity-10 text-primary rounded-3 mb-3 mx-auto">
+                                        <i class="bi bi-file-earmark-plus fs-4"></i>
+                                    </div>
+                                    <h5 class="mb-2">Crear Tipificación</h5>
+                                    <p class="text-muted small mb-0">Registrar una nueva evaluación de usuario</p>
+                                </div>
+                                <div class="card-footer bg-transparent border-0 pt-0 pb-4 text-center">
+                                    <a href="{% url 'crear_evaluacion' %}" class="btn btn-sm btn-primary px-4">
+                                        <i class="bi bi-plus-lg me-2"></i>Crear
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Buscar Tipificaciones -->
+                        <div class="col-md-6">
+                            <div class="card h-100 border-0 shadow-sm transition-all hover-shadow-lg">
+                                <div class="card-body p-4 text-center">
+                                    <div class="icon-shape icon-lg bg-info bg-opacity-10 text-info rounded-3 mb-3 mx-auto">
+                                        <i class="bi bi-search fs-4"></i>
+                                    </div>
+                                    <h5 class="mb-2">Buscar Tipificaciones</h5>
+                                    <p class="text-muted small mb-0">Consultar evaluaciones anteriores</p>
+                                </div>
+                                <div class="card-footer bg-transparent border-0 pt-0 pb-4 text-center">
+                                    <a href="{% url 'buscar_tipificacion' %}" class="btn btn-sm btn-outline-info px-4">
+                                        <i class="bi bi-search me-2"></i>Buscar
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Últimas Evaluaciones -->
+            <div class="card shadow-sm border-0 rounded-3">
+                <div class="card-header bg-white border-0 pb-0 pt-4">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h4 class="h5 fw-semibold mb-0">
+                            <i class="bi bi-clock-history text-primary me-2"></i>Historial de Evaluaciones
+                        </h4>
+                        <div class="d-flex align-items-center gap-3">
+                            <form method="get" class="d-flex gap-2">
+                                <input type="text" name="q" class="form-control form-control-sm" placeholder="Buscar por documento, nombre o ID" value="{{ query }}"style="min-width: 250px;">
+                                <button type="submit" class="btn btn-sm btn-primary">
+                                    <i class="bi bi-search"></i>
+                                </button>
+                            </form>
+                            <span class="badge bg-primary bg-opacity-10 text-primary">
+                                {{ evaluaciones.paginator.count }} registros
+                            </span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="card-body px-0 pb-0">
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle mb-0">
+                            <thead class="table-light">
+                                <tr>
+                                    <th class="ps-4">Consecutivo</th>
+                                    <th>Fecha</th>
+                                    <th>Documento</th>
+                                    <th>Ciudadano</th>
+                                    <th>Tipificaciones</th>
+                                    <th class="text-end pe-4">Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for evaluacion in evaluaciones %}
+                                <tr>
+                                    <td class="ps-4 fw-semibold">#{{ evaluacion.consecutivo }}</td>
+                                    <td>
+                                        <span class="d-block">{{ evaluacion.fecha_creacion|date:'d/m/Y' }}</span>
+                                        <small class="text-muted">{{ evaluacion.fecha_creacion|date:'H:i' }}</small>
+                                    </td>
+                                    <td>
+                                        <div class="d-flex align-items-center">
+                                            <div class="avatar avatar-xs me-2">
+                                                <span class="avatar-initial rounded-circle bg-primary text-white">
+                                                    {{ evaluacion.ciudadano.tipo_identificacion|first }}
+                                                </span>
+                                            </div>
+                                            <div>
+                                                <span class="d-block">{{ evaluacion.ciudadano.tipo_identificacion }}</span>
+                                                <small class="text-muted">{{ evaluacion.ciudadano.numero_identificacion }}</small>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>{{ evaluacion.ciudadano.nombre|truncatechars:20 }}</td>
+                                    <td>
+                                        {% if evaluacion.tipificaciones.exists %}
+                                        <div class="dropdown">
+                                            <button class="btn btn-sm btn-outline-secondary dropdown-toggle" 
+                                                    type="button" 
+                                                    data-bs-toggle="dropdown"
+                                                    title="Ver tipificaciones">
+                                                {{ evaluacion.tipificaciones.count }}
+                                            </button>
+                                            <ul class="dropdown-menu">
+                                                {% for tipificacion in evaluacion.tipificaciones.all %}
+                                                <li>
+                                                    <span class="dropdown-item-text small">
+                                                        <strong>{{ tipificacion.opcion.texto }}:</strong>
+                                                        {{ tipificacion.valor|truncatechars:40 }}
+                                                    </span>
+                                                </li>
+                                                {% endfor %}
+                                            </ul>
+                                        </div>
+                                        {% else %}
+                                        <span class="badge bg-secondary">Sin tipificaciones</span>
+                                        {% endif %}
+                                    </td>
+                                    <td class="text-end pe-4">
+                                        <a href="{% url 'detalle_evaluacion' evaluacion.id %}" class="btn btn-sm btn-outline-primary"data-bs-toggle="tooltip" title="Ver detalles completos">
+                                            <i class="bi bi-eye"></i>
+                                        </a>
+                                    </td>
+                                </tr>
+                                {% empty %}
+                                <tr>
+                                    <td colspan="6" class="text-center py-4">
+                                        <div class="d-flex flex-column align-items-center">
+                                            <i class="bi bi-file-text text-muted" style="font-size: 2rem;"></i>
+                                            <h5 class="mt-3">No se encontraron evaluaciones</h5>
+                                            <p class="text-muted">Intenta con otros términos de búsqueda o crea una nueva</p>
+                                            <a href="{% url 'crear_evaluacion' %}" class="btn btn-sm btn-primary">
+                                                <i class="bi bi-plus-lg me-2"></i>Nueva Evaluación
+                                            </a>
+                                        </div>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                
+                <!-- Paginación -->
+                {% if evaluaciones.has_other_pages %}
+                <div class="card-footer bg-white border-0">
+                    <nav aria-label="Paginación">
+                        <ul class="pagination pagination-sm justify-content-center mb-0">
+                            {% if evaluaciones.has_previous %}
+                            <li class="page-item">
+                                <a class="page-link" href="?page=1{% if query %}&q={{ query }}{% endif %}" aria-label="Primera">
+                                    <i class="bi bi-chevron-double-left"></i>
+                                </a>
+                            </li>
+                            <li class="page-item">
+                                <a class="page-link" href="?page={{ evaluaciones.previous_page_number }}{% if query %}&q={{ query }}{% endif %}" aria-label="Anterior">
+                                    <i class="bi bi-chevron-left"></i>
+                                </a>
+                            </li>
+                            {% endif %}
+
+                            {% for num in evaluaciones.paginator.page_range %}
+                                {% if evaluaciones.number == num %}
+                                <li class="page-item active">
+                                    <span class="page-link">{{ num }}</span>
+                                </li>
+                                {% elif num > evaluaciones.number|add:'-3' and num < evaluaciones.number|add:'3' %}
+                                <li class="page-item">
+                                    <a class="page-link" href="?page={{ num }}{% if query %}&q={{ query }}{% endif %}">
+                                        {{ num }}
+                                    </a>
+                                </li>
+                                {% endif %}
+                            {% endfor %}
+
+                            {% if evaluaciones.has_next %}
+                            <li class="page-item">
+                                <a class="page-link" href="?page={{ evaluaciones.next_page_number }}{% if query %}&q={{ query }}{% endif %}" aria-label="Siguiente">
+                                    <i class="bi bi-chevron-right"></i>
+                                </a>
+                            </li>
+                            <li class="page-item">
+                                <a class="page-link" href="?page={{ evaluaciones.paginator.num_pages }}{% if query %}&q={{ query }}{% endif %}" aria-label="Última">
+                                    <i class="bi bi-chevron-double-right"></i>
+                                </a>
+                            </li>
+                            {% endif %}
+                        </ul>
+                    </nav>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Inicializar tooltips
+    const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+    tooltipTriggerList.forEach(tooltipTriggerEl => {
+        new bootstrap.Tooltip(tooltipTriggerEl);
+    });
+});
+</script>
 {% endblock %}

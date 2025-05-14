@@ -1,29 +1,122 @@
 {% extends 'usuarios/base.html' %}
-{% block content %}
-<h1 class="title">Reportes</h1>
-<form method="GET">
-    <label>Desde:</label><input type="date" name="fecha_inicio">
-    <label>Hasta:</label><input type="date" name="fecha_fin">
-    <button class="button is-info" type="submit">Filtrar</button>
-</form>
+{% block title %}Reportes de Tipificaciones{% endblock %}
+{% load static %}
 
-<table class="table is-striped is-hoverable">
-    <thead>
-        <tr>
-            <th>Cédula</th>
-            <th>Tipificación</th>
-            <th>Fecha</th>
-            <!-- agrega más campos si deseas -->
-        </tr>
-    </thead>
-    <tbody>
-        {% for item in reportes %}
-        <tr>
-            <td>{{ item.cedula }}</td>
-            <td>{{ item.tipificacion }}</td>
-            <td>{{ item.fecha }}</td>
-        </tr>
-        {% endfor %}
-    </tbody>
-</table>
+{% block content %}
+<div class="container py-5">
+    <div class="text-center mb-4">
+        <h1 class="text-primary fw-bold mb-2">
+            <i class="bi bi-bar-chart-line-fill me-2"></i>Reportes de Tipificaciones
+        </h1>
+        {% if reportes %}
+        <p class="text-muted mb-3">Mostrando {{ reportes|length }} registros</p>
+        <a href="{% url 'exportar_csv' %}?fecha_inicio={{ request.GET.fecha_inicio }}&fecha_fin={{ request.GET.fecha_fin }}" class="btn btn-outline-success">
+            <i class="bi bi-download me-2"></i>Exportar CSV
+        </a>
+        {% else %}
+        <p class="text-muted mb-3">No se encontraron registros para las fechas seleccionadas.</p>
+        {% endif %}
+    </div>
+
+    <!-- Formulario centrado -->
+    <form method="get" class="mb-4">
+        <div class="row justify-content-center text-center">
+            <div class="col-12 col-md-3 mb-3">
+                <label for="fecha_inicio" class="form-label">Fecha inicial</label>
+                <input type="date" class="form-control" id="fecha_inicio" name="fecha_inicio"
+                    value="{{ request.GET.fecha_inicio }}" max="{{ hoy }}">
+            </div>
+
+            <div class="col-12 col-md-3 mb-3">
+                <label for="fecha_fin" class="form-label">Fecha final</label>
+                <input type="date" class="form-control" id="fecha_fin" name="fecha_fin"
+                    value="{{ request.GET.fecha_fin }}" max="{{ hoy }}">
+            </div>
+        </div>
+
+        <div class="d-flex justify-content-center gap-3">
+            <button type="submit" class="btn btn-primary">
+                <i class="bi bi-filter-circle me-2"></i>Filtrar
+            </button>
+            <a href="?" class="btn btn-outline-secondary">
+                <i class="bi bi-arrow-counterclockwise me-2"></i>Limpiar
+            </a>
+        </div>
+    </form>
+
+
+    {% if reportes %}
+    <div class="table-responsive rounded-3 shadow-sm">
+        <table class="table table-hover align-middle mb-0">
+            <thead class="table-light">
+                <tr>
+                    <th scope="col" class="text-center">#</th>
+                    <th scope="col">Cédula</th>
+                    <th scope="col">Nombre</th>
+                    <th scope="col" class="w-25">Tipificación</th>
+                    <th scope="col">Opción</th>
+                    <th scope="col" class="text-nowrap">
+                        <i class="bi bi-calendar-event me-1"></i>Fecha
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in reportes %}
+                <tr class="cursor-pointer"
+                    onclick="window.location='{% url 'detalle_evaluacion' item.evaluacion.id %}'">
+                    <th scope="row" class="text-center">{{ forloop.counter }}</th>
+                    <td class="fw-bold text-primary">{{ item.evaluacion.ciudadano.numero_identificacion }}</td>
+                    <td>{{ item.evaluacion.ciudadano.nombre }}</td>
+                    <td>
+                        <span data-bs-toggle="tooltip" title="{{ item.valor }}">
+                            {{ item.valor|truncatechars:40 }}
+                        </span>
+                    </td>
+                    <td>
+                        <span class="badge bg-secondary bg-opacity-25 text-dark">
+                            {{ item.opcion.texto }}
+                        </span>
+                    </td>
+                    <td class="text-nowrap">
+                        <i class="bi bi-clock-history me-1 text-muted"></i>
+                        {{ item.fecha_registro|date:"d/m/Y H:i" }}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Paginación -->
+    <nav class="mt-4">
+        <ul class="pagination justify-content-center">
+            <!-- Agregar lógica de paginación aquí -->
+        </ul>
+    </nav>
+    {% else %}
+    <div class="alert alert-info text-center mt-4 shadow-sm" role="alert">
+        <div class="py-4">
+            <i class="bi bi-inbox fs-1 text-muted mb-3"></i>
+            <h4 class="alert-heading">No hay registros encontrados</h4>
+            <p>Intenta ajustar los filtros o seleccionar un rango de fechas diferente.</p>
+            <hr>
+            <a href="?" class="btn btn-outline-primary mt-2">
+                <i class="bi bi-x-circle me-2"></i>Limpiar filtros
+            </a>
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Inicializar tooltips
+    document.addEventListener('DOMContentLoaded', function () {
+        var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+        var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+            return new bootstrap.Tooltip(tooltipTriggerEl)
+        })
+    })
+</script>
 {% endblock %}

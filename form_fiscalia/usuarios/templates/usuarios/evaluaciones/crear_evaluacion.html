@@ -1,0 +1,161 @@
+{% extends "usuarios/base.html" %}
+{% load static %}
+{% block title %}Crear Evaluación{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <form method="post" class="needs-validation" novalidate>
+                {% csrf_token %}
+                
+                <!-- Tarjeta de Datos Básicos -->
+                <div class="card shadow mb-4">
+                    <div class="card-header bg-primary text-white">
+                        <h3 class="h5 mb-0"><i class="bi bi-person-badge me-2"></i>Datos del Ciudadano</h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label for="id_conversacion" class="form-label">
+                                    <i class="bi bi-chat-dots me-1"></i>ID Conversación
+                                </label>
+                                <input type="text" name="id_conversacion" id="id_conversacion" class="form-control" required pattern=".{5,}">
+                                <div class="invalid-feedback">Ingrese un ID de conversación válido (mín. 5 caracteres)</div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label for="tipo_identificacion" class="form-label">
+                                    <i class="bi bi-card-checklist me-1"></i>Tipo de Identificación
+                                </label>
+                                <select name="tipo_identificacion" id="tipo_identificacion" class="form-select" required>
+                                    <option value="">Seleccionar...</option>
+                                    <option value="CC">Cédula de Ciudadanía</option>
+                                    <option value="TI">Tarjeta de Identidad</option>
+                                    <option value="CE">Cédula de Extranjería</option>
+                                </select>
+                                <div class="invalid-feedback">Seleccione un tipo de identificación</div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label for="numero_identificacion" class="form-label">
+                                    <i class="bi bi-123 me-1"></i>Número de Identificación
+                                </label>
+                                <input type="text" name="numero_identificacion" id="numero_identificacion" class="form-control" required pattern="[0-9]{6,}">
+                                <div class="invalid-feedback">Ingrese un número válido (solo números, mín. 6 dígitos)</div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label for="nombre" class="form-label">
+                                    <i class="bi bi-person-circle me-1"></i>Nombre Completo
+                                </label>
+                                <input type="text" name="nombre" id="nombre" class="form-control" required pattern="[A-Za-z ]{3,}">
+                                <div class="invalid-feedback">Ingrese un nombre válido (mín. 3 caracteres)</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tarjeta de Tipificación -->
+                <div class="card shadow">
+                    <div class="card-header bg-info text-white">
+                        <h3 class="h5 mb-0"><i class="bi bi-diagram-3 me-2"></i>Proceso de Tipificación</h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label for="canal" class="form-label">
+                                    <i class="bi bi-telephone me-1"></i>Canal de Contacto
+                                </label>
+                                <select name="canal" id="canal" class="form-select" required onchange="updateOpciones()">
+                                    <option value="">Seleccionar canal...</option>
+                                    <option value="Nivel 1">Nivel 1</option>
+                                    <option value="Videollamada">Videollamada</option>
+                                    <option value="Chat">Chat</option>
+                                    <option value="Lengua de señas">Lengua de Señas</option>
+                                </select>
+                                <div class="invalid-feedback">Seleccione un canal de contacto</div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label for="opcion" class="form-label">
+                                    <i class="bi bi-menu-button me-1"></i>Categoría
+                                </label>
+                                <select name="opcion" id="opcion" class="form-select" required>
+                                    <option value="">Primero seleccione un canal</option>
+                                </select>
+                                <div class="invalid-feedback">Seleccione una categoría</div>
+                            </div>
+
+                            <div class="col-12">
+                                <label for="observaciones" class="form-label">
+                                    <i class="bi bi-chat-text me-1"></i>Observaciones
+                                </label>
+                                <textarea name="observaciones" id="observaciones" class="form-control" rows="3"placeholder="Ingrese detalles relevantes..."></textarea>
+                                <div class="form-text">Máximo 500 caracteres</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="d-grid gap-2 d-md-flex justify-content-center mt-4">
+                    <button type="reset" class="btn btn-secondary me-md-2">
+                        <i class="bi bi-arrow-clockwise me-2"></i>Limpiar Campos
+                    <button type="submit" class="btn btn-primary px-4">
+                        <i class="bi bi-save me-2"></i>Guardar Evaluación
+                    </button>
+                    <a href="{% if request.user.groups.first.name == 'administrador' %} {% url 'dashboard_admin' %}{% elif request.user.groups.first.name == 'supervisor' %} {% url 'dashboard_supervisor' %}{% elif request.user.groups.first.name == 'agente' %}{% url 'dashboard_agente' %}{% else %} # {% endif %}" class="btn btn-outline-secondary">
+                        Cancelar
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Configuración dinámica de opciones
+    const opcionesPorCanal = {
+        "Nivel 1": ["Denuncia", "Clasificación de denuncia", "Orientación, Información y Consulta de Casos", "PQRS", "Transferencias", "Agendamiento sala presencial", "Presencia inmediata de policía", "Llamadas Ociosas", "Solicitud copia de denuncia", "Outbound"],
+        "Videollamada": ["Denuncia", "Denuncias Nivel 2", "Clasificación de denuncia", "PQRS", "Solicitud copia de denuncia", "Llamadas Ociosas"],
+        "Chat": ["Orientación, Información y Consulta de Casos", "Interacción Ociosa", "Solicitud copia de denuncia"],
+        "Lengua de señas": ["Denuncia nivel 1", "Denuncias Nivel 2", "PQRS", "Solicitud copia de denuncia"]
+    };
+
+    function updateOpciones() {
+        const canal = document.getElementById('canal');
+        const opcionSelect = document.getElementById('opcion');
+        opcionSelect.innerHTML = '<option value="">Cargando opciones...</option>';
+        
+        setTimeout(() => { // Simular carga asincrónica
+            opcionSelect.innerHTML = '<option value="">Seleccione una categoría</option>';
+            if (canal.value && opcionesPorCanal[canal.value]) {
+                opcionesPorCanal[canal.value].forEach(op => {
+                    const option = document.createElement('option');
+                    option.value = op;
+                    option.text = op;
+                    opcionSelect.appendChild(option);
+                });
+            }
+        }, 300);
+    }
+
+    // Validación Bootstrap
+    (() => {
+        'use strict'
+        const forms = document.querySelectorAll('.needs-validation')
+        Array.from(forms).forEach(form => {
+            form.addEventListener('submit', event => {
+                if (!form.checkValidity()) {
+                    event.preventDefault()
+                    event.stopPropagation()
+                }
+                form.classList.add('was-validated')
+            }, false)
+        })
+    })()
+</script>
+
+
+
+{%endblock %}

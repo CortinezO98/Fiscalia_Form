@@ -12,6 +12,10 @@ urlpatterns = [
     path('usuarios/ver/', views.ver_usuarios, name='ver_usuarios'),
     path('usuarios/toggle-user-status/<int:user_id>/', views.toggle_user_status, name='toggle_user_status'),
     path('usuarios/eliminar/<int:user_id>/', views.eliminar_usuario, name='eliminar_usuario'),
+    path('crear_evaluacion/', views.crear_evaluacion, name='crear_evaluacion'),
+    path('buscar/', views.buscar_tipificacion, name='buscar_tipificacion'),
     path('reportes/', views.reportes_view, name='reportes'),
+    path('reportes/exportar/', views.exportar_csv, name='exportar_csv'),
+
     
 ]

@@ -18,6 +18,12 @@ from .decorators import en_grupo
 from django.http import JsonResponse
 from django.views.decorators.http import require_POST
 from django.db.models import Q
+from .models import *
+from django.utils import timezone
+from django.http import HttpResponseForbidden
+from django.utils.timezone import make_aware
+from django.utils.timezone import now, localtime
+from django.db.models import Count
 
 
 
@@ -70,15 +76,79 @@ def logout_view(request):
     logout(request)
     return redirect('login')
 
+
+# @en_grupo('agente')
+
+
 @login_required
 @en_grupo('agente')
 def dashboard_agente(request):
-    return render(request, 'usuarios/dashboard_agente.html')
+    agente = get_object_or_404(Agente, user=request.user)
+    
+    # Obtener todas las evaluaciones del agente con relaciones optimizadas
+    evaluaciones_list = Evaluacion.objects.filter(agente=agente).select_related(
+        'ciudadano', 'formulario'
+    ).prefetch_related('tipificaciones').order_by('-fecha_creacion')
+    
+    query = request.GET.get('q', '')
+    if query:
+        # Buscar por número de documento, nombre o ID de conversación
+        evaluaciones_list = evaluaciones_list.filter(
+            Q(ciudadano__numero_identificacion__icontains=query) |
+            Q(ciudadano__nombre__icontains=query) |
+            Q(id_conversacion__icontains=query) |
+            Q(consecutivo__icontains=query)
+        )
+    
+    # Paginación
+    paginator = Paginator(evaluaciones_list, 10)
+    page_number = request.GET.get('page')
+    
+    try:
+        evaluaciones = paginator.page(page_number)
+    except PageNotAnInteger:
+        evaluaciones = paginator.page(1)
+    except EmptyPage:
+        evaluaciones = paginator.page(paginator.num_pages)
+
+    # Estadísticas
+    total_evaluaciones = evaluaciones_list.count()
+    evaluaciones_hoy = evaluaciones_list.filter(
+        fecha_creacion__date=timezone.now().date()
+    ).count()
+
+    context = {
+        'evaluaciones': evaluaciones,
+        'total_evaluaciones': total_evaluaciones,
+        'evaluaciones_hoy': evaluaciones_hoy,
+        'query': query
+    }
+    
+    return render(request, 'usuarios/dashboard_agente.html', context)
+
+
+
+
+
 
 @login_required
 @en_grupo('supervisor')
 def dashboard_supervisor(request):
-    return render(request, 'usuarios/dashboard_supervisor.html')
+    agentes_activos = Agente.objects.filter(activo=True).count() 
+    total_evaluaciones = Evaluacion.objects.count()
+    evaluaciones_hoy = Evaluacion.objects.filter(fecha_creacion__date=localtime(now()).date()).count()
+    eficiencia = round((evaluaciones_hoy / agentes_activos * 100), 2) if agentes_activos > 0 else 0.0
+
+    context = {
+        'total_evaluaciones': total_evaluaciones,
+        'evaluaciones_hoy': evaluaciones_hoy,
+        'agentes_activos': agentes_activos,
+        'eficiencia': eficiencia
+    }
+    return render(request, 'usuarios/dashboard_supervisor.html', context)
+
+
+
 
 @login_required
 @en_grupo('administrador')
@@ -171,6 +241,26 @@ def crear_usuario(request, user_id=None):
 
             user.groups.clear()
             user.groups.add(grupo)
+            
+            grupo_nombre = grupo.name.lower()
+
+            if grupo_nombre == "agente":
+                from .models import Agente
+                Agente.objects.get_or_create(user=user, defaults={
+                    "nombre": f"{user.first_name} {user.last_name}"
+                })
+
+            elif grupo_nombre == "supervisor":
+                from .models import Supervisor
+                Supervisor.objects.get_or_create(user=user, defaults={
+                    "nombre": f"{user.first_name} {user.last_name}"
+                })
+
+            elif grupo_nombre == "administrador":
+                from .models import Administrador
+                Administrador.objects.get_or_create(user=user, defaults={
+                    "nombre": f"{user.first_name} {user.last_name}"
+                })
 
             messages.success(request, f"Usuario {'actualizado' if user_id else 'creado'} correctamente.")
             return redirect('dashboard_admin')
@@ -287,21 +377,105 @@ def editar_usuario(request, usuario_id):
 
 
 
+
+
+
+@login_required
+def crear_evaluacion(request):
+    if not request.user.groups.filter(name__in=['supervisor', 'administrador', 'agente']).exists():
+        return HttpResponseForbidden("No tienes permiso para acceder a esta página.")
+
+    if request.method == 'POST':
+        # Aquí iría la lógica para crear una evaluación
+        pass
+    else:
+        # Aquí iría la lógica para mostrar el formulario de creación de evaluación
+        pass
+
+    return render(request, 'usuarios/evaluaciones/crear_evaluacion.html')
+
+
+
+
+@login_required
+def buscar_tipificacion(request):
+    # Validación de grupo
+    if not request.user.groups.filter(name__in=['agente', 'supervisor', 'administrador']).exists():
+        return HttpResponseForbidden("No tienes permiso para acceder a esta página.")
+
+    query = request.GET.get('q', '').strip()
+    tipificaciones = Tipificacion.objects.none()
+
+    if query:
+        tipificaciones = Tipificacion.objects.filter(
+            Q(evaluacion__ciudadano__numero_identificacion__icontains=query) |
+            Q(evaluacion__ciudadano__nombre__icontains=query) |
+            Q(evaluacion__id_conversacion__icontains=query)
+        ).select_related('evaluacion__ciudadano', 'opcion').order_by('-fecha_registro')
+
+        paginator = Paginator(tipificaciones, 10)
+        page_number = request.GET.get('page')
+        tipificaciones = paginator.get_page(page_number)
+
+    return render(request, 'usuarios/evaluaciones/buscar_tipificacion.html', {
+        'tipificaciones': tipificaciones
+    })
+
+
+
+
+
+
 @login_required
 def reportes_view(request):
-    from .models import Tipificacion
+    if not request.user.groups.filter(name__in=['supervisor', 'administrador']).exists():
+        return HttpResponseForbidden("No tienes permiso para acceder a esta página.")
     reportes = Tipificacion.objects.all()
     fecha_inicio = request.GET.get('fecha_inicio')
     fecha_fin = request.GET.get('fecha_fin')
+
     if fecha_inicio and fecha_fin:
-        reportes = reportes.filter(fecha__range=[fecha_inicio, fecha_fin])
+        reportes = reportes.filter(fecha_registro__date__range=[fecha_inicio, fecha_fin])
+
     return render(request, 'usuarios/reportes.html', {'reportes': reportes})
 
-def buscar_tipificaciones(request):
-    return HttpResponse("Vista buscar_tipificaciones aún no implementada")
 
 
+@login_required
 def exportar_csv(request):
-    return HttpResponse("Vista EXPORTAR_CSV aún no implementada")
+    if not request.user.groups.filter(name__in=['supervisor', 'administrador']).exists():
+        return HttpResponseForbidden("No tienes permiso para acceder a esta página.")
+    fecha_inicio = request.GET.get('fecha_inicio')
+    fecha_fin = request.GET.get('fecha_fin')
+
+    reportes = Tipificacion.objects.select_related('evaluacion__ciudadano', 'opcion').all()
+
+    if fecha_inicio and fecha_fin:
+        try:
+            fi = make_aware(datetime.strptime(fecha_inicio, '%Y-%m-%d'))
+            ff = make_aware(datetime.strptime(fecha_fin, '%Y-%m-%d'))
+            reportes = reportes.filter(fecha_registro__range=[fi, ff])
+        except ValueError:
+            pass  # Si las fechas no son válidas, se omite el filtro
+
+    # Crear la respuesta con encabezado CSV
+    response = HttpResponse(content_type='text/csv')
+    response['Content-Disposition'] = 'attachment; filename="reporte_tipificaciones.csv"'
+
+    writer = csv.writer(response)
+    writer.writerow(['Fecha Registro', 'Ciudadano', 'Documento', 'ID Conversación', 'Opción', 'Valor', 'Observaciones'])
+
+    for r in reportes:
+        writer.writerow([
+            r.fecha_registro.strftime('%Y-%m-%d %H:%M'),
+            r.evaluacion.ciudadano.nombre,
+            r.evaluacion.ciudadano.numero_identificacion,
+            r.evaluacion.id_conversacion,
+            r.opcion.texto if r.opcion else '',
+            r.valor,
+            r.observaciones
+        ])
+
+    return response
 
 
