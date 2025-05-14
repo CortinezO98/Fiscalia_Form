@@ -24,6 +24,7 @@ from django.http import HttpResponseForbidden
 from django.utils.timezone import make_aware
 from django.utils.timezone import now, localtime
 from django.db.models import Count
+from datetime import datetime
 
 
 
@@ -84,15 +85,12 @@ def logout_view(request):
 @en_grupo('agente')
 def dashboard_agente(request):
     agente = get_object_or_404(Agente, user=request.user)
-    
-    # Obtener todas las evaluaciones del agente con relaciones optimizadas
     evaluaciones_list = Evaluacion.objects.filter(agente=agente).select_related(
         'ciudadano', 'formulario'
     ).prefetch_related('tipificaciones').order_by('-fecha_creacion')
     
     query = request.GET.get('q', '')
     if query:
-        # Buscar por número de documento, nombre o ID de conversación
         evaluaciones_list = evaluaciones_list.filter(
             Q(ciudadano__numero_identificacion__icontains=query) |
             Q(ciudadano__nombre__icontains=query) |
@@ -100,7 +98,6 @@ def dashboard_agente(request):
             Q(consecutivo__icontains=query)
         )
     
-    # Paginación
     paginator = Paginator(evaluaciones_list, 10)
     page_number = request.GET.get('page')
     
@@ -111,7 +108,6 @@ def dashboard_agente(request):
     except EmptyPage:
         evaluaciones = paginator.page(paginator.num_pages)
 
-    # Estadísticas
     total_evaluaciones = evaluaciones_list.count()
     evaluaciones_hoy = evaluaciones_list.filter(
         fecha_creacion__date=timezone.now().date()
@@ -299,9 +295,8 @@ def ver_usuarios(request):
             q_objects |= Q(email__icontains=term)
         usuarios_list = usuarios_list.filter(q_objects).distinct()
 
-    # Paginación
     page = request.GET.get('page', 1)
-    paginator = Paginator(usuarios_list, 10)  # 10 usuarios por página
+    paginator = Paginator(usuarios_list, 10)  
 
     try:
         usuarios = paginator.page(page)
@@ -456,9 +451,8 @@ def exportar_csv(request):
             ff = make_aware(datetime.strptime(fecha_fin, '%Y-%m-%d'))
             reportes = reportes.filter(fecha_registro__range=[fi, ff])
         except ValueError:
-            pass  # Si las fechas no son válidas, se omite el filtro
+            pass  
 
-    # Crear la respuesta con encabezado CSV
     response = HttpResponse(content_type='text/csv')
     response['Content-Disposition'] = 'attachment; filename="reporte_tipificaciones.csv"'
 

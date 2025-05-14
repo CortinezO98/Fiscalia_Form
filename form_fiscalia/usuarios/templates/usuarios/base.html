@@ -10,10 +10,11 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
   <link href="{% static 'css/styles.css' %}" rel="stylesheet">
 </head>
-<body>
+<body class="d-flex flex-column min-vh-100">
+  
   {% include 'usuarios/base/header.html' %}
-
-  <main >
+  
+  <main class="flex-fill">
     {% block content %}{% endblock %}
   </main>
 
@@ -21,5 +22,34 @@
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+{% if request.user.is_authenticated %}
+<script>
+  let logoutTimer;
+
+  function cerrarSesionPorInactividad() {
+      Swal.fire({
+          title: 'Sesión expirada',
+          text: 'Tu sesión ha sido cerrada por inactividad.',
+          icon: 'warning',
+          confirmButtonText: 'Aceptar',
+          allowOutsideClick: false,
+          allowEscapeKey: false
+      }).then(() => {
+          window.location.href = "{% url 'logout' %}";
+      });       
+  }
+
+  function resetLogoutTimer() {
+      clearTimeout(logoutTimer);
+      logoutTimer = setTimeout(cerrarSesionPorInactividad, 480000); // 8 minutos = 480000 ms
+  }
+
+  document.addEventListener('DOMContentLoaded', resetLogoutTimer);
+  document.addEventListener('mousemove', resetLogoutTimer);
+  document.addEventListener('keydown', resetLogoutTimer);
+  document.addEventListener('scroll', resetLogoutTimer);
+</script>
+{% endif %}
 </body>
 </html>
