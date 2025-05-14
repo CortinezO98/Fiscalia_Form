@@ -394,7 +394,6 @@ def crear_evaluacion(request):
 
 @login_required
 def buscar_tipificacion(request):
-    # Validación de grupo
     if not request.user.groups.filter(name__in=['agente', 'supervisor', 'administrador']).exists():
         return HttpResponseForbidden("No tienes permiso para acceder a esta página.")
 

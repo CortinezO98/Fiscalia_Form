@@ -233,3 +233,46 @@ textarea { resize: none; }
   border: none;
 }
 /* FIN */
+
+
+/* DASHBOARD ADMIN */
+.sidebar {
+  min-height: 100vh;
+  transition: all 0.3s;
+}
+
+.hover-shadow {
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.hover-shadow:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 1rem 3rem rgba(0,0,0,.175)!important;
+}
+
+@media (max-width: 767.98px) {
+  .sidebar {
+    position: fixed;
+    top: 0;
+    left: -100%;
+    width: 75%;
+    z-index: 1050;
+  }
+  
+  .sidebar.show {
+    left: 0;
+  }
+  
+  .sidebar-backdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 1040;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0,0,0,.5);
+  }
+}
+
+
+/* FIN */

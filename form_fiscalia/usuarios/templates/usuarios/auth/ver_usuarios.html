@@ -1,4 +1,4 @@
-{% extends "usuarios/base.html" %}
+{% extends "usuarios/base/base.html" %}
 {% load static %}
 
 {% block title %}Gestión de Usuarios{% endblock %}
@@ -12,17 +12,19 @@
                     <h1 class="h3 fw-bold mb-2">Gestión de Usuarios</h1>
                     <p class="text-muted mb-0">Administra los usuarios del sistema y sus permisos</p>
                 </div>
-                <div class="d-flex gap-2">
-                    <div class="search-box">
+                <div class="d-flex gap-2 flex-column flex-md-row">
+                    <div class="search-box w-100">
                         <form method="GET" action="{% url 'ver_usuarios' %}" class="position-relative">
-                            <input type="text" name="q" class="form-control pe-4" placeholder="Buscar usuarios..." value="{{ request.GET.q }}" aria-label="Buscar usuarios">
+                            <input type="text" name="q" class="form-control pe-4" placeholder="Buscar usuarios" value="{{ request.GET.q }}" aria-label="Buscar usuarios">
                             <button type="submit" class="btn btn-link position-absolute end-0 top-0 bottom-0">
                                 <i class="bi bi-search"></i>
                             </button>
                         </form>
                     </div>
                     <a href="{% url 'crear_usuario' %}" class="btn btn-primary flex-shrink-0">
-                        <i class="bi bi-plus-lg me-2"></i>Nuevo Usuario
+                        <i class="bi bi-plus-lg me-2"></i>
+                        <span class="d-none d-md-inline">Nuevo Usuario</span>
+                        <span class="d-inline d-md-none">Nuevo Usuario</span>
                     </a>
                 </div>
             </div>
