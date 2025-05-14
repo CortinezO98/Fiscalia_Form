@@ -1,7 +1,12 @@
 from django.contrib.auth.decorators import user_passes_test
+from django.http import HttpResponseForbidden
+from django.contrib.auth.models import Group
 
-def group_required(group_name):
-    """Permite el acceso solo a usuarios de cierto grupo."""
-    def in_group(u):
-        return u.is_authenticated and u.groups.filter(name=group_name).exists()
-    return user_passes_test(in_group)
+def en_grupo(grupo_nombre):
+    def decorator(func):
+        def wrap(request, *args, **kwargs):
+            if not request.user.groups.filter(name=grupo_nombre).exists():
+                return HttpResponseForbidden("No tienes permiso para acceder a esta página.")
+            return func(request, *args, **kwargs)
+        return wrap
+    return decorator

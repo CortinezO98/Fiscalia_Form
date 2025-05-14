@@ -23,6 +23,11 @@
         </a>
       </li>
       <li>
+        <a href="{% url 'ver_usuarios' %}" class="nav-link text-white">
+          <i class="bi bi-person-lines-fill me-2"></i>Ver Usuarios
+        </a>
+      </li>
+      <li>
         <a href="{% url 'reportes' %}" class="nav-link text-white">
           <i class="bi bi-file-earmark-text me-2"></i>Reportes
         </a>
@@ -59,6 +64,18 @@
       <div class="col-md-6 mb-4">
         <div class="card shadow rounded-4 border-0">
           <div class="card-body">
+            <h5 class="card-title text-primary"><i class="bi bi-person-lines-fill me-2"></i>Ver Usuarios</h5>
+            <p class="card-text">Consulta los usuarios registrados en el sistema.</p>
+            <a href="{% url 'ver_usuarios' %}" class="btn btn-outline-primary">
+              <i class="bi bi-eye me-1"></i>Ver Usuarios
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-6 mb-4">
+        <div class="card shadow rounded-4 border-0">
+          <div class="card-body">
             <h5 class="card-title text-primary"><i class="bi bi-file-earmark-text me-2"></i>Reportes</h5>
             <p class="card-text">Consulta y exporta los reportes del sistema.</p>
             <a href="{% url 'reportes' %}" class="btn btn-outline-primary">
@@ -67,6 +84,7 @@
           </div>
         </div>
       </div>
+    </div>
     </div>
   </main>
 </div>
