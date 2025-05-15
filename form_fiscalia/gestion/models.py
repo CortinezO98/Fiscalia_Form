@@ -26,7 +26,7 @@ class Segmento(models.Model):
     class Meta:
         verbose_name = "Segmento"
         verbose_name_plural = "Segmentos"
-        ordering = ['nombre']
+        ordering = ['id']
 
     def __str__(self):
         return self.nombre
