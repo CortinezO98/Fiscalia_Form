@@ -6,7 +6,7 @@ def en_grupo(grupo_nombre):
     def decorator(func):
         def wrap(request, *args, **kwargs):
             if not request.user.groups.filter(name=grupo_nombre).exists():
-                return HttpResponseForbidden("No tienes permiso para acceder a esta página.")
+                return  ("No tienes permiso para acceder a esta página.")
             return func(request, *args, **kwargs)
         return wrap
     return decorator

@@ -22,8 +22,9 @@ from usuarios.admin import admin_site
 from usuarios import views
 
 urlpatterns = [
+    path('', include('gestion.urls')),
     path('admin/', admin.site.urls),
-    path('', views.login_view, name='login'),
+    path('login/', views.login_view, name='login'),
     path('captcha/', include('captcha.urls')),
     path('usuarios/', include('usuarios.urls')),
     path('buscar/', views.buscar_tipificacion, name='buscar_tipificacion'),

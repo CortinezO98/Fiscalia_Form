@@ -7,7 +7,6 @@ from django.contrib import messages
 from .forms import *
 from django.http import HttpResponse
 from django.core.paginator import  Paginator, EmptyPage, PageNotAnInteger
-from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.decorators import user_passes_test
 from django.contrib.auth.hashers import make_password
@@ -25,10 +24,8 @@ from django.utils.timezone import make_aware
 from django.utils.timezone import now, localtime
 from django.db.models import Count
 from datetime import datetime
-
-
-
 from django.shortcuts import redirect
+from .enums import Roles
 
 def home_redirect_view(request):
     if request.user.is_authenticated:
@@ -36,16 +33,15 @@ def home_redirect_view(request):
     else:
         return render(request, 'usuarios/auth/login.html')
 
-    
-def index(request):
-    return render(request, 'usuarios/auth/login.html')
 
-
-
-def en_grupo(nombre):
+def en_grupo(roles_id):
     def check(user):
-        return user.groups.filter(name=nombre).exists()
+        for rol_id in roles_id:
+            if user.groups.filter(id=rol_id).exists():
+                return True
     return user_passes_test(check)
+
+
 
 def login_view(request):
     form = LoginForm(request.POST or None)
@@ -60,12 +56,7 @@ def login_view(request):
 
             if user:
                 login(request, user)
-                if user.groups.filter(name='administrador').exists():
-                    return redirect('dashboard_admin')
-                elif user.groups.filter(name='supervisor').exists():
-                    return redirect('dashboard_supervisor')
-                elif user.groups.filter(name='agente').exists():
-                    return redirect('dashboard_agente')
+                return redirect('index')
             else:
                 messages.error(request, "Credenciales incorrectas. Intenta nuevamente.")
         else:
@@ -78,46 +69,13 @@ def logout_view(request):
     return redirect('login')
 
 
-# @en_grupo('agente')
-
-
 @login_required
-@en_grupo('agente')
+@en_grupo([Roles.AGENTE.value])
 def dashboard_agente(request):
-    agente = get_object_or_404(Agente, user=request.user)
-    evaluaciones_list = Evaluacion.objects.filter(agente=agente).select_related(
-        'ciudadano', 'formulario'
-    ).prefetch_related('tipificaciones').order_by('-fecha_creacion')
-    
-    query = request.GET.get('q', '')
-    if query:
-        evaluaciones_list = evaluaciones_list.filter(
-            Q(ciudadano__numero_identificacion__icontains=query) |
-            Q(ciudadano__nombre__icontains=query) |
-            Q(id_conversacion__icontains=query) |
-            Q(consecutivo__icontains=query)
-        )
-    
-    paginator = Paginator(evaluaciones_list, 10)
-    page_number = request.GET.get('page')
-    
-    try:
-        evaluaciones = paginator.page(page_number)
-    except PageNotAnInteger:
-        evaluaciones = paginator.page(1)
-    except EmptyPage:
-        evaluaciones = paginator.page(paginator.num_pages)
 
-    total_evaluaciones = evaluaciones_list.count()
-    evaluaciones_hoy = evaluaciones_list.filter(
-        fecha_creacion__date=timezone.now().date()
-    ).count()
 
     context = {
-        'evaluaciones': evaluaciones,
-        'total_evaluaciones': total_evaluaciones,
-        'evaluaciones_hoy': evaluaciones_hoy,
-        'query': query
+        
     }
     
     return render(request, 'usuarios/dashboard_agente.html', context)
@@ -128,18 +86,18 @@ def dashboard_agente(request):
 
 
 @login_required
-@en_grupo('supervisor')
+@en_grupo([Roles.SUPERVISOR.value])
 def dashboard_supervisor(request):
-    agentes_activos = Agente.objects.filter(activo=True).count() 
-    total_evaluaciones = Evaluacion.objects.count()
-    evaluaciones_hoy = Evaluacion.objects.filter(fecha_creacion__date=localtime(now()).date()).count()
-    eficiencia = round((evaluaciones_hoy / agentes_activos * 100), 2) if agentes_activos > 0 else 0.0
+    # agentes_activos = Agente.objects.filter(activo=True).count() 
+    # total_evaluaciones = Evaluacion.objects.count()
+    # evaluaciones_hoy = Evaluacion.objects.filter(fecha_creacion__date=localtime(now()).date()).count()
+    # eficiencia = round((evaluaciones_hoy / agentes_activos * 100), 2) if agentes_activos > 0 else 0.0
 
     context = {
-        'total_evaluaciones': total_evaluaciones,
-        'evaluaciones_hoy': evaluaciones_hoy,
-        'agentes_activos': agentes_activos,
-        'eficiencia': eficiencia
+        # 'total_evaluaciones': total_evaluaciones,
+        # 'evaluaciones_hoy': evaluaciones_hoy,
+        # 'agentes_activos': agentes_activos,
+        # 'eficiencia': eficiencia
     }
     return render(request, 'usuarios/dashboard_supervisor.html', context)
 
@@ -147,14 +105,13 @@ def dashboard_supervisor(request):
 
 
 @login_required
-@en_grupo('administrador')
+@en_grupo([Roles.ADMINISTRADOR.value])
 def dashboard_admin(request):
     return render(request, 'usuarios/dashboard_admin.html')
 
 
-
 @login_required
-@en_grupo('administrador')
+@en_grupo([Roles.ADMINISTRADOR.value])
 def crear_usuario(request, user_id=None):
     user = get_object_or_404(User, id=user_id) if user_id else None
     grupos = Group.objects.all()
@@ -280,7 +237,7 @@ def crear_usuario(request, user_id=None):
 
 
 @login_required
-@en_grupo('administrador')
+@en_grupo([Roles.ADMINISTRADOR.value])
 def ver_usuarios(request):
     query = request.GET.get('q', '').strip()
     usuarios_list = User.objects.all().order_by('username')
@@ -317,7 +274,7 @@ def ver_usuarios(request):
 
 
 @login_required
-@en_grupo('administrador')
+@en_grupo([Roles.ADMINISTRADOR.value])
 @require_POST
 def toggle_user_status(request, user_id):
     try:
@@ -331,7 +288,7 @@ def toggle_user_status(request, user_id):
         return JsonResponse({'success': False, 'message': str(e)}, status=500)
 
 @login_required
-@en_grupo('administrador')
+@en_grupo([Roles.ADMINISTRADOR.value])
 def eliminar_usuario(request, user_id):
     try:
         usuario = User.objects.get(id=user_id)
@@ -354,7 +311,7 @@ def eliminar_usuario(request, user_id):
 
 
 @login_required
-@en_grupo('administrador')
+@en_grupo([Roles.ADMINISTRADOR.value])
 def editar_usuario(request, usuario_id):
     usuario = get_object_or_404(User, id=usuario_id)
 
@@ -376,10 +333,8 @@ def editar_usuario(request, usuario_id):
 
 
 @login_required
+@en_grupo([Roles.ADMINISTRADOR.value, Roles.SUPERVISOR.value, Roles.AGENTE.value])
 def crear_evaluacion(request):
-    if not request.user.groups.filter(name__in=['supervisor', 'administrador', 'agente']).exists():
-        return HttpResponseForbidden("No tienes permiso para acceder a esta página.")
-
     if request.method == 'POST':
         # Aquí iría la lógica para crear una evaluación
         pass
@@ -393,9 +348,8 @@ def crear_evaluacion(request):
 
 
 @login_required
+@en_grupo([Roles.ADMINISTRADOR.value, Roles.SUPERVISOR.value, Roles.AGENTE.value])
 def buscar_tipificacion(request):
-    if not request.user.groups.filter(name__in=['agente', 'supervisor', 'administrador']).exists():
-        return HttpResponseForbidden("No tienes permiso para acceder a esta página.")
 
     query = request.GET.get('q', '').strip()
     tipificaciones = Tipificacion.objects.none()
@@ -421,24 +375,23 @@ def buscar_tipificacion(request):
 
 
 @login_required
+@en_grupo([Roles.ADMINISTRADOR.value, Roles.SUPERVISOR.value])
 def reportes_view(request):
-    if not request.user.groups.filter(name__in=['supervisor', 'administrador']).exists():
-        return HttpResponseForbidden("No tienes permiso para acceder a esta página.")
-    reportes = Tipificacion.objects.all()
-    fecha_inicio = request.GET.get('fecha_inicio')
-    fecha_fin = request.GET.get('fecha_fin')
 
-    if fecha_inicio and fecha_fin:
-        reportes = reportes.filter(fecha_registro__date__range=[fecha_inicio, fecha_fin])
+    # reportes = Tipificacion.objects.all()
+    # fecha_inicio = request.GET.get('fecha_inicio')
+    # fecha_fin = request.GET.get('fecha_fin')
 
-    return render(request, 'usuarios/reportes.html', {'reportes': reportes})
+    # if fecha_inicio and fecha_fin:
+    #     reportes = reportes.filter(fecha_registro__date__range=[fecha_inicio, fecha_fin])
+
+    return render(request, 'usuarios/reportes.html', {})
 
 
 
 @login_required
+@en_grupo([Roles.ADMINISTRADOR.value, Roles.SUPERVISOR.value])
 def exportar_csv(request):
-    if not request.user.groups.filter(name__in=['supervisor', 'administrador']).exists():
-        return HttpResponseForbidden("No tienes permiso para acceder a esta página.")
     fecha_inicio = request.GET.get('fecha_inicio')
     fecha_fin = request.GET.get('fecha_fin')
 
@@ -471,4 +424,6 @@ def exportar_csv(request):
 
     return response
 
-
+def ValidarRolUsuario(request, rol_id):
+    user = request.user
+    return user.groups.filter(id=rol_id).exists()
