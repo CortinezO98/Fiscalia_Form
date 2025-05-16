@@ -46,7 +46,7 @@
 
   function resetLogoutTimer() {
       clearTimeout(logoutTimer);
-      logoutTimer = setTimeout(cerrarSesionPorInactividad, 480000); // 8 minutos = 480000 ms
+      logoutTimer = setTimeout(cerrarSesionPorInactividad,  3600000); // 8 minutos = 480000 ms
   }
 
   document.addEventListener('DOMContentLoaded', resetLogoutTimer);
