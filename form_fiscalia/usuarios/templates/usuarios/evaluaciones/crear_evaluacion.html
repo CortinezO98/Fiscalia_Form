@@ -6,7 +6,7 @@
 <div class="container py-5">
     <div class="row justify-content-center">
         <div class="col-lg-8">
-            <form method="post" class="needs-validation" novalidate>
+            <form method="post">
                 {% csrf_token %}
                 
                 <!-- Tarjeta de Datos Básicos -->
@@ -17,41 +17,40 @@
                     <div class="card-body">
                         <div class="row g-3">
                             <div class="col-md-6">
-                                <label for="id_conversacion" class="form-label">
-                                    <i class="bi bi-chat-dots me-1"></i>ID Conversación
+                                <label for="numero_identificacion" class="form-label">
+                                    <i class="bi bi-123 me-1"></i>Número de Identificación
                                 </label>
-                                <input type="text" name="id_conversacion" id="id_conversacion" class="form-control" required pattern=".{5,}">
-                                <div class="invalid-feedback">Ingrese un ID de conversación válido (mín. 5 caracteres)</div>
+                                <input type="text" name="numero_identificacion" id="numero_identificacion" class="form-control" maxlength="20" required>
                             </div>
-
+                            
                             <div class="col-md-6">
                                 <label for="tipo_identificacion" class="form-label">
                                     <i class="bi bi-card-checklist me-1"></i>Tipo de Identificación
                                 </label>
                                 <select name="tipo_identificacion" id="tipo_identificacion" class="form-select" required>
-                                    <option value="">Seleccionar...</option>
-                                    <option value="CC">Cédula de Ciudadanía</option>
-                                    <option value="TI">Tarjeta de Identidad</option>
-                                    <option value="CE">Cédula de Extranjería</option>
+                                    <option value="" selected disabled>Seleccionar...</option>
+                                    {% for tipo in tiposIdentificacion %}
+                                        <option value="{{tipo.id}}">{{tipo.nombre}}</option>
+                                    {% endfor %}
                                 </select>
-                                <div class="invalid-feedback">Seleccione un tipo de identificación</div>
                             </div>
-
-                            <div class="col-md-6">
-                                <label for="numero_identificacion" class="form-label">
-                                    <i class="bi bi-123 me-1"></i>Número de Identificación
-                                </label>
-                                <input type="text" name="numero_identificacion" id="numero_identificacion" class="form-control" required pattern="[0-9]{6,}">
-                                <div class="invalid-feedback">Ingrese un número válido (solo números, mín. 6 dígitos)</div>
-                            </div>
-
+                            
                             <div class="col-md-6">
                                 <label for="nombre" class="form-label">
                                     <i class="bi bi-person-circle me-1"></i>Nombre Completo
                                 </label>
-                                <input type="text" name="nombre" id="nombre" class="form-control" required pattern="[A-Za-z ]{3,}">
-                                <div class="invalid-feedback">Ingrese un nombre válido (mín. 3 caracteres)</div>
+                                <input type="text" name="nombre" id="nombre" class="form-control" maxlength="255" required>
                             </div>
+
+                            <div class="col-md-6">
+                                <label for="conversacion_id" class="form-label">
+                                    <i class="bi bi-chat-dots me-1"></i>ID Conversación
+                                </label>
+                                <input type="text" name="conversacion_id" id="conversacion_id" class="form-control" maxlength="250" required>
+                                <div class="invalid-feedback">Ingrese un ID de conversación válido (mín. 5 caracteres)</div>
+                            </div>
+
+                            <input type="text" name="cuidadano_id" id="cuidadano_id" value="" hidden>
                         </div>
                     </div>
                 </div>
@@ -64,49 +63,63 @@
                     <div class="card-body">
                         <div class="row g-3">
                             <div class="col-md-6">
-                                <label for="canal" class="form-label">
-                                    <i class="bi bi-telephone me-1"></i>Canal de Contacto
+                                <label for="segmento" class="form-label">
+                                    <i class="bi bi-telephone me-1"></i>Segmento
                                 </label>
-                                <select name="canal" id="canal" class="form-select" required onchange="updateOpciones()">
-                                    <option value="">Seleccionar canal...</option>
-                                    <option value="Nivel 1">Nivel 1</option>
-                                    <option value="Videollamada">Videollamada</option>
-                                    <option value="Chat">Chat</option>
-                                    <option value="Lengua de señas">Lengua de Señas</option>
+                                <select name="segmento" id="segmento" class="form-select" required>
+                                    <option value="" selected disabled>Seleccione un segmento...</option>
+                                    {% for segmento in segmentos %}
+                                        <option value="{{segmento.id}}">{{segmento.nombre}}</option>
+                                    {% endfor %}
                                 </select>
-                                <div class="invalid-feedback">Seleccione un canal de contacto</div>
                             </div>
 
                             <div class="col-md-6">
-                                <label for="opcion" class="form-label">
+                                <label for="tipificacion" class="form-label">
+                                    <i class="bi bi-telephone me-1"></i>Tipificación
+                                </label>
+                                <select name="tipificacion" id="tipificacion" class="form-select" required>
+                                    <option value="" selected disabled>Seleccione una tipificacion...</option>
+                                </select>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label for="categoria" class="form-label">
                                     <i class="bi bi-menu-button me-1"></i>Categoría
                                 </label>
-                                <select name="opcion" id="opcion" class="form-select" required>
-                                    <option value="">Primero seleccione un canal</option>
+                                <select name="categoria" id="categoria" class="form-select" required>
+                                    <option value="" selected disabled>Selecciona una categoría</option>
                                 </select>
-                                <div class="invalid-feedback">Seleccione una categoría</div>
+                            </div>
+
+                            <div class="col-md-6" hidden>
+                                <label for="subcategoria" class="form-label">
+                                    <i class="bi bi-menu-button me-1"></i>Sub Categoría
+                                </label>
+                                <select name="subcategoria" id="subcategoria" class="form-select">
+                                    <option value="" selected disabled>Selecciona una sub categoría</option>
+                                </select>
                             </div>
 
                             <div class="col-12">
-                                <label for="observaciones" class="form-label">
+                                <label for="observacion" class="form-label">
                                     <i class="bi bi-chat-text me-1"></i>Observaciones
                                 </label>
-                                <textarea name="observaciones" id="observaciones" class="form-control" rows="3"placeholder="Ingrese detalles relevantes..."></textarea>
-                                <div class="form-text">Máximo 500 caracteres</div>
+                                <textarea name="observacion" id="observacion" class="form-control" rows="3" placeholder="Observaciones generales" required></textarea>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <div class="d-grid gap-2 d-md-flex justify-content-center mt-4">
-                    <button type="reset" class="btn btn-secondary me-md-2">
-                        <i class="bi bi-arrow-clockwise me-2"></i>Limpiar Campos
-                    <button type="submit" class="btn btn-primary px-4">
-                        <i class="bi bi-save me-2"></i>Guardar Evaluación
-                    </button>
-                    <a href="{% if request.user.groups.first.name == 'administrador' %} {% url 'dashboard_admin' %}{% elif request.user.groups.first.name == 'supervisor' %} {% url 'dashboard_supervisor' %}{% elif request.user.groups.first.name == 'agente' %}{% url 'dashboard_agente' %}{% else %} # {% endif %}" class="btn btn-outline-secondary">
+                <div class="text-center mt-4">
+                    <a href="{% url 'index' %}" class="btn btn-outline-secondary mx-2">
                         Cancelar
                     </a>
+                    <button type="reset" class="btn btn-secondary mx-2">
+                        <i class="bi bi-arrow-clockwise me-2"></i>Limpiar Campos
+                    <button type="submit" class="btn btn-primary mx-2">
+                        <i class="bi bi-save me-2"></i>Guardar Evaluación
+                    </button>
                 </div>
             </form>
         </div>
@@ -114,48 +127,140 @@
 </div>
 
 <script>
-    // Configuración dinámica de opciones
-    const opcionesPorCanal = {
-        "Nivel 1": ["Denuncia", "Clasificación de denuncia", "Orientación, Información y Consulta de Casos", "PQRS", "Transferencias", "Agendamiento sala presencial", "Presencia inmediata de policía", "Llamadas Ociosas", "Solicitud copia de denuncia", "Outbound"],
-        "Videollamada": ["Denuncia", "Denuncias Nivel 2", "Clasificación de denuncia", "PQRS", "Solicitud copia de denuncia", "Llamadas Ociosas"],
-        "Chat": ["Orientación, Información y Consulta de Casos", "Interacción Ociosa", "Solicitud copia de denuncia"],
-        "Lengua de señas": ["Denuncia nivel 1", "Denuncias Nivel 2", "PQRS", "Solicitud copia de denuncia"]
-    };
+    $(document).ready(function() {
+        $('#numero_identificacion').on('blur', function() {
+            const numeroIdentificacion = $(this).val().trim();
 
-    function updateOpciones() {
-        const canal = document.getElementById('canal');
-        const opcionSelect = document.getElementById('opcion');
-        opcionSelect.innerHTML = '<option value="">Cargando opciones...</option>';
-        
-        setTimeout(() => { // Simular carga asincrónica
-            opcionSelect.innerHTML = '<option value="">Seleccione una categoría</option>';
-            if (canal.value && opcionesPorCanal[canal.value]) {
-                opcionesPorCanal[canal.value].forEach(op => {
-                    const option = document.createElement('option');
-                    option.value = op;
-                    option.text = op;
-                    opcionSelect.appendChild(option);
-                });
-            }
-        }, 300);
-    }
+            if (numeroIdentificacion.length === 0) return;
 
-    // Validación Bootstrap
-    (() => {
-        'use strict'
-        const forms = document.querySelectorAll('.needs-validation')
-        Array.from(forms).forEach(form => {
-            form.addEventListener('submit', event => {
-                if (!form.checkValidity()) {
-                    event.preventDefault()
-                    event.stopPropagation()
+            $.ajax({
+                url: '/api/ciudadano/',
+                method: 'GET',
+                data: {
+                    numero_identificacion: numeroIdentificacion
+                },
+                success: function(response) {
+                    console.log("response", response)
+                    if (response && response.id) {
+                        $('#tipo_identificacion').val(response.tipo_identificacion_id);
+                        $('#nombre').val(response.nombre);
+                        $('#cuidadano_id').val(response.id);
+                    }
+                },
+                error: function(xhr) {
+                    $('#tipo_identificacion').val('');
+                    $('#cuidadano_id').val('');
+                    $('#nombre').val('');
                 }
-                form.classList.add('was-validated')
-            }, false)
-        })
-    })()
+            });
+        });
+
+        $('#segmento').on('change', function() {
+            const segmentoId = $(this).val();
+
+            if (!segmentoId) return;
+
+            // Limpiar selects dependientes
+            $('#tipificacion').empty().append('<option value="" disabled selected>Cargando tipificaciones...</option>');
+            $('#categoria').empty().append('<option value="" disabled selected>Selecciona una categoría</option>');
+            $('#subcategoria').empty().append('<option value="" disabled selected>Selecciona una sub categoría</option>');
+
+            $.ajax({
+                url: '/api/tipificaciones/',  // Reemplaza con la URL de tu vista
+                method: 'GET',
+                data: {
+                    segmento_id: segmentoId
+                },
+                success: function(response) {
+                    $('#tipificacion').empty().append('<option value="" disabled selected>Seleccione una tipificación...</option>');
+                    if (response.length > 0) {
+                        response.forEach(function(tip) {
+                            $('#tipificacion').append(`<option value="${tip.id}">${tip.nombre}</option>`);
+                        });
+                    } else {
+                        $('#tipificacion').append('<option value="" disabled>No hay tipificaciones</option>');
+                    }
+                },
+                error: function(xhr) {
+                    console.error("Error al cargar tipificaciones:", xhr);
+                    $('#tipificacion').empty().append('<option value="" disabled>Error al cargar</option>');
+                }
+            });
+        });
+
+        $('#tipificacion').on('change', function() {
+            const tipificacionId = $(this).val();
+
+            if (!tipificacionId) return;
+
+            // Limpiar los selects dependientes
+            $('#categoria').empty().append('<option value="" disabled selected>Cargando categorías...</option>');
+            $('#subcategoria').empty().append('<option value="" disabled selected>Selecciona una sub categoría</option>');
+
+            $.ajax({
+                url: '/api/categorias/',  // Reemplaza con la URL correcta
+                method: 'GET',
+                data: {
+                    tipificacion_id: tipificacionId
+                },
+                success: function(response) {
+                    $('#categoria').empty().append('<option value="" disabled selected>Selecciona una categoría</option>');
+                    if (response.length > 0) {
+                        response.forEach(function(cat) {
+                            $('#categoria').append(`<option value="${cat.id}">${cat.nombre}</option>`);
+                        });
+                    } else {
+                        $('#categoria').append('<option value="" disabled>No hay categorías</option>');
+                    }
+                },
+                error: function(xhr) {
+                    console.error("Error al cargar categorías:", xhr);
+                    $('#categoria').empty().append('<option value="" disabled>Error al cargar</option>');
+                }
+            });
+        });
+
+        $('#categoria').on('change', function() {
+            const categoriaId = $(this).val();
+
+            if (!categoriaId) return;
+
+            // Limpiar el select de subcategorías
+            $('#subcategoria').empty().append('<option value="" disabled selected>Buscando subcategorías...</option>');
+
+            // Ocultar por defecto y quitar required
+            $('#subcategoria').prop('required', false);
+            $('#subcategoria').closest('.col-md-6').attr('hidden', true);
+
+            $.ajax({
+                url: '/api/subcategorias/',  // URL a tu vista para obtener subcategorías
+                method: 'GET',
+                data: {
+                    categoria_padre_id: categoriaId
+                },
+                success: function(response) {
+                    if (response.length > 0) {
+                        $('#subcategoria').empty().append('<option value="" disabled selected>Selecciona una sub categoría</option>');
+                        response.forEach(function(sub) {
+                            $('#subcategoria').append(`<option value="${sub.id}">${sub.nombre}</option>`);
+                        });
+
+                        // Mostrar el div y marcar el campo como requerido
+                        $('#subcategoria').prop('required', true);
+                        $('#subcategoria').closest('.col-md-6').removeAttr('hidden');
+                    } else {
+                        // No hay subcategorías, mantener el select oculto
+                        $('#subcategoria').empty().append('<option value="" disabled selected>Sin subcategorías</option>');
+                    }
+                },
+                error: function(xhr) {
+                    console.error("Error al cargar subcategorías:", xhr);
+                    $('#subcategoria').empty().append('<option value="" disabled>Error al cargar</option>');
+                }
+            });
+        });
+
+    });
 </script>
-
-
 
 {%endblock %}

@@ -27,11 +27,13 @@ def crear_evaluacion(request):
     if request.method == 'POST':
         # Aquí iría la lógica para crear una evaluación
         pass
-    else:
-        # Aquí iría la lógica para mostrar el formulario de creación de evaluación
-        pass
+    
+    context = {
+        "tiposIdentificacion": TipoIdentificacion.objects.all(),
+        "segmentos": Segmento.objects.all(),
+    }
 
-    return render(request, 'usuarios/evaluaciones/crear_evaluacion.html')
+    return render(request, 'usuarios/evaluaciones/crear_evaluacion.html', context)
 
 
 @login_required
