@@ -14,9 +14,7 @@ from io import BytesIO
 from datetime import date, datetime
 import openpyxl
 from openpyxl.utils import get_column_letter
-
-
-
+import inspect
 
 def index(request):
     if request.user.is_authenticated:
@@ -58,6 +56,7 @@ def crear_evaluacion(request):
                 )
                 messages.success(request, "Evaluación guardada correctamente.")
         except Exception as e:
+            RegistrarError(inspect.currentframe().f_code.co_name, str(e), request)
             messages.error(request, "Ocurrió un error al guardar la evaluación.")
         return redirect('index')
     

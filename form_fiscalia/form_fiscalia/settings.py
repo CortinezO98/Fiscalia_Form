@@ -50,8 +50,6 @@ INSTALLED_APPS = [
     'usuarios',
     'gestion',
     'captcha',
-
-
 ]
 
 MIDDLEWARE = [

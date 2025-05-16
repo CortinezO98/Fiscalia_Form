@@ -39,3 +39,9 @@ class EvaluacionAdmin(admin.ModelAdmin):
     list_display = ('ciudadano', 'categoria', 'user', 'fecha')
     list_filter = ('fecha', 'user', 'categoria')
     search_fields = ('ciudadano__nombre', 'observacion')
+
+@admin.register(RegistroError)
+class RegistroErrorAdmin(admin.ModelAdmin):
+    list_display = ('metodo', 'excepcion', 'usuario', 'fecha')
+    list_filter = ('metodo',)
+    search_fields = ('metodo',)

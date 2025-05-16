@@ -51,7 +51,7 @@ class Tipificacion(models.Model):
 
 class Categoria(models.Model):
     nombre = models.CharField(max_length=200)
-    nivel = models.CharField(default=1, db_index=True)
+    nivel = models.IntegerField(default=1, db_index=True)
     tipificacion = models.ForeignKey(Tipificacion, null=True, blank=True, on_delete=models.CASCADE)
     categoria_padre = models.ForeignKey('self', null=True, blank=True, on_delete=models.CASCADE, related_name='categoriapadre')
 
@@ -74,3 +74,10 @@ class Evaluacion(models.Model):
     categoria = models.ForeignKey(Categoria, on_delete=models.CASCADE)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     fecha = models.DateTimeField(auto_now=True)
+
+
+class RegistroError(models.Model):
+    metodo = models.CharField(max_length=100)
+    excepcion = models.TextField()
+    fecha = models.DateTimeField(auto_now=True)
+    usuario = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)

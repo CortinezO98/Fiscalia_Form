@@ -16,7 +16,6 @@ from django.http import JsonResponse
 from django.views.decorators.http import require_POST
 from django.db.models import Q
 from .models import *
-from gestion.models import *
 from django.utils import timezone
 from django.http import HttpResponseForbidden
 from django.utils.timezone import make_aware
@@ -25,6 +24,9 @@ from django.db.models import Count
 from datetime import datetime
 from django.shortcuts import redirect
 from .enums import Roles
+from gestion.utils import RegistrarError
+from gestion.models import *
+import inspect
 
 def home_redirect_view(request):
     if request.user.is_authenticated:
@@ -219,29 +221,12 @@ def crear_usuario(request, user_id=None):
             
             grupo_nombre = grupo.name.lower()
 
-            if grupo_nombre == "agente":
-                from .models import Agente
-                Agente.objects.get_or_create(user=user, defaults={
-                    "nombre": f"{user.first_name} {user.last_name}"
-                })
-
-            elif grupo_nombre == "supervisor":
-                from .models import Supervisor
-                Supervisor.objects.get_or_create(user=user, defaults={
-                    "nombre": f"{user.first_name} {user.last_name}"
-                })
-
-            elif grupo_nombre == "administrador":
-                from .models import Administrador
-                Administrador.objects.get_or_create(user=user, defaults={
-                    "nombre": f"{user.first_name} {user.last_name}"
-                })
-
             messages.success(request, f"Usuario {'actualizado' if user_id else 'creado'} correctamente.")
             return redirect('dashboard_admin')
 
         except Exception as e:
-            messages.error(request, f"Error al {'actualizar' if user_id else 'crear'} el usuario: {str(e)}")
+            RegistrarError(inspect.currentframe().f_code.co_name, str(e), request)
+            messages.error(request, f"Error al {'actualizar' if user_id else 'crear'} el usuario")
             return render(request, 'usuarios/auth/crear_usuario.html', {
                 'user': user,
                 'grupos': grupos,
@@ -304,6 +289,7 @@ def toggle_user_status(request, user_id):
     except User.DoesNotExist:
         return JsonResponse({'success': False, 'message': 'Usuario no encontrado'}, status=404)
     except Exception as e:
+        RegistrarError(inspect.currentframe().f_code.co_name, str(e), request)
         return JsonResponse({'success': False, 'message': str(e)}, status=500)
 
 
@@ -319,6 +305,7 @@ def eliminar_usuario(request, user_id):
         messages.error(request, 'El usuario no existe')
         return redirect('ver_usuarios')
     except Exception as e:
+        RegistrarError(inspect.currentframe().f_code.co_name, str(e), request)
         messages.error(request, f'Error al eliminar usuario: {str(e)}')
         return redirect('ver_usuarios')
 
