@@ -27,7 +27,4 @@ urlpatterns = [
     path('login/', views.login_view, name='login'),
     path('captcha/', include('captcha.urls')),
     path('usuarios/', include('usuarios.urls')),
-    path('buscar/', views.buscar_tipificacion, name='buscar_tipificacion'),
-    path('exportar/', views.exportar_csv, name='exportar_csv'),
-
 ]

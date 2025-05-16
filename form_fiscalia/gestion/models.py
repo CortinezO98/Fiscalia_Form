@@ -2,13 +2,19 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.utils import timezone
 
+class TipoIdentificacion(models.Model):
+    nombre = models.CharField(max_length=100)
+
+    class Meta:
+        verbose_name = "Tipo documento"
+        verbose_name_plural = "Tipos de documentos"
+        ordering = ['nombre']
+
+    def __str__(self):
+        return f"{self.nombre}"
+
 class Ciudadano(models.Model):
-    TIPO_ID_CHOICES = [
-        ('CC', 'Cédula de ciudadanía'),
-        ('TI', 'Tarjeta de identidad'),
-        ('CE', 'Cédula de extranjería'),
-    ]
-    tipo_identificacion = models.CharField(max_length=2, choices=TIPO_ID_CHOICES)
+    tipo_identificacion = models.ForeignKey(TipoIdentificacion, on_delete=models.CASCADE)
     numero_identificacion = models.CharField(max_length=20, unique=True)
     nombre = models.CharField(max_length=255)
 
@@ -59,6 +65,7 @@ class Categoria(models.Model):
 
 
 class Evaluacion(models.Model):
+    conversacion_id = models.CharField(max_length=250)
     observacion = models.TextField()
     ciudadano = models.ForeignKey(Ciudadano, on_delete=models.CASCADE)
     categoria = models.ForeignKey(Categoria, on_delete=models.CASCADE)

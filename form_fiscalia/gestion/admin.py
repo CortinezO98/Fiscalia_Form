@@ -1,6 +1,12 @@
 from django.contrib import admin
 from .models import *
 
+@admin.register(TipoIdentificacion)
+class TipoIdentificacionAdmin(admin.ModelAdmin):
+    list_display = ('nombre',)
+    search_fields = ('nombre',)
+
+
 @admin.register(Ciudadano)
 class CiudadanoAdmin(admin.ModelAdmin):
     list_display = ('nombre', 'tipo_identificacion', 'numero_identificacion')

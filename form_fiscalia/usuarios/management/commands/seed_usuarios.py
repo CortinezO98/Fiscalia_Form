@@ -13,7 +13,7 @@ class Command(BaseCommand):
             with transaction.atomic():
                 CreateRoles()
                 CreateUsers()
-                self.stdout.write(self.style.SUCCESS('Datos de prueba creados correctamente.'))
+                self.stdout.write(self.style.SUCCESS('Datos creados correctamente.'))
         except Exception as e:
             self.stdout.write(self.style.SUCCESS('Error, se hizo rollback'+e))
 
