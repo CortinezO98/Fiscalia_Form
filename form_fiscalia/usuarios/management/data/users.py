@@ -8,7 +8,7 @@ users = [
     
     {
         'username': '79701106',
-        'password': 'br6hJp0Vul1',
+        'password': STAFF_PASSWORD,
         'is_superuser': False,
         'is_staff': False,
         'role_id': Roles.SUPERVISOR.value,
@@ -18,7 +18,7 @@ users = [
     },
     {
         'username': '1019058339',
-        'password': 'ieJM3G93b',
+        'password': STAFF_PASSWORD,
         'is_superuser': False,
         'is_staff': False,
         'role_id': Roles.SUPERVISOR.value,
@@ -28,7 +28,7 @@ users = [
     },
     {
         'username': '1031139363',
-        'password': 'Z33KWae63rv',
+        'password': STAFF_PASSWORD,
         'is_superuser': False,
         'is_staff': False,
         'role_id': Roles.SUPERVISOR.value,
@@ -38,7 +38,7 @@ users = [
     },
     {
         'username': '1013647181',
-        'password': 'gwn2w11A8',
+        'password': STAFF_PASSWORD,
         'is_superuser': False,
         'is_staff': False,
         'role_id': Roles.AGENTE.value,
@@ -48,7 +48,7 @@ users = [
     },
     {
         'username': '1032464988',
-        'password': '8Osl14Ju9N8',
+        'password': STAFF_PASSWORD,
         'is_superuser': False,
         'is_staff': False,
         'role_id': Roles.AGENTE.value,
@@ -58,7 +58,7 @@ users = [
     },
     {
         'username': '1083889670',
-        'password': '7Y6Deyri0',
+        'password': STAFF_PASSWORD,
         'is_superuser': False,
         'is_staff': False,
         'role_id': Roles.AGENTE.value,
@@ -68,7 +68,7 @@ users = [
     },
     {
         'username': '1019067144',
-        'password': 'B1prUI44Oki',
+        'password': STAFF_PASSWORD,
         'is_superuser': False,
         'is_staff': False,
         'role_id': Roles.AGENTE.value,
@@ -78,7 +78,7 @@ users = [
     },
     {
         'username': '1016095823',
-        'password': '82c0eLio3',
+        'password': STAFF_PASSWORD,
         'is_superuser': False,
         'is_staff': False,
         'role_id': Roles.AGENTE.value,
@@ -88,7 +88,7 @@ users = [
     },
     {
         'username': '1032430133',
-        'password': 'S416P3eD3r',
+        'password': STAFF_PASSWORD,
         'is_superuser': False,
         'is_staff': False,
         'role_id': Roles.AGENTE.value,
@@ -98,7 +98,7 @@ users = [
     },
     {
         'username': '1007645906',
-        'password': '0og9z6GiAnx',
+        'password': STAFF_PASSWORD,
         'is_superuser': False,
         'is_staff': False,
         'role_id': Roles.AGENTE.value,
@@ -108,7 +108,7 @@ users = [
     },
     {
         'username': '1030692006',
-        'password': 'Ha0rMy6MD0',
+        'password': STAFF_PASSWORD,
         'is_superuser': False,
         'is_staff': False,
         'role_id': Roles.AGENTE.value,
@@ -118,7 +118,7 @@ users = [
     },
     {
         'username': '1007474186',
-        'password': '1k8uas6JB',
+        'password': STAFF_PASSWORD,
         'is_superuser': False,
         'is_staff': False,
         'role_id': Roles.AGENTE.value,
@@ -128,7 +128,7 @@ users = [
     },
     {
         'username': '1013651792',
-        'password': 'MOu1Jt9G2a7',
+        'password': STAFF_PASSWORD,
         'is_superuser': False,
         'is_staff': False,
         'role_id': Roles.AGENTE.value,
@@ -138,7 +138,7 @@ users = [
     },
     {
         'username': '1015455551',
-        'password': 'r1x74dA55',
+        'password': STAFF_PASSWORD,
         'is_superuser': False,
         'is_staff': False,
         'role_id': Roles.AGENTE.value,
@@ -148,7 +148,7 @@ users = [
     },
     {
         'username': '1136889467',
-        'password': 'AIWl647Xi',
+        'password': STAFF_PASSWORD,
         'is_superuser': False,
         'is_staff': False,
         'role_id': Roles.AGENTE.value,
@@ -158,7 +158,7 @@ users = [
     },
     {
         'username': '1010224947',
-        'password': 'NuI7r7W49',
+        'password': STAFF_PASSWORD,
         'is_superuser': False,
         'is_staff': False,
         'role_id': Roles.AGENTE.value,
@@ -168,7 +168,7 @@ users = [
     },
     {
         'username': '1016054104',
-        'password': '1roeap0C4',
+        'password': STAFF_PASSWORD,
         'is_superuser': False,
         'is_staff': False,
         'role_id': Roles.AGENTE.value,
@@ -178,7 +178,7 @@ users = [
     },
     {
         'username': '1233902073',
-        'password': '75Oodes0e3C',
+        'password': STAFF_PASSWORD,
         'is_superuser': False,
         'is_staff': False,
         'role_id': Roles.AGENTE.value,
@@ -188,7 +188,7 @@ users = [
     },
     {
         'username': '1015464132',
-        'password': '23ngKKAE741',
+        'password': STAFF_PASSWORD,
         'is_superuser': False,
         'is_staff': False,
         'role_id': Roles.AGENTE.value,
@@ -198,7 +198,7 @@ users = [
     },
     {
         'username': '1030686130',
-        'password': '1U3Rdn03Da',
+        'password': STAFF_PASSWORD,
         'is_superuser': False,
         'is_staff': False,
         'role_id': Roles.AGENTE.value,
@@ -208,7 +208,7 @@ users = [
     },
     {
         'username': '1015478487',
-        'password': 'Bla7D8Cri4i',
+        'password': STAFF_PASSWORD,
         'is_superuser': False,
         'is_staff': False,
         'role_id': Roles.AGENTE.value,
@@ -218,7 +218,7 @@ users = [
     },
     {
         'username': '1016018251',
-        'password': 'WC5a172r2',
+        'password': STAFF_PASSWORD,
         'is_superuser': False,
         'is_staff': False,
         'role_id': Roles.AGENTE.value,
@@ -228,7 +228,7 @@ users = [
     },
     {
         'username': '1013671315',
-        'password': 'ayK5y3ra1',
+        'password': STAFF_PASSWORD,
         'is_superuser': False,
         'is_staff': False,
         'role_id': Roles.AGENTE.value,
@@ -238,7 +238,7 @@ users = [
     },
     {
         'username': '1013669185',
-        'password': 'a9m18nL5Cd',
+        'password': STAFF_PASSWORD,
         'is_superuser': False,
         'is_staff': False,
         'role_id': Roles.AGENTE.value,
@@ -248,7 +248,7 @@ users = [
     },
     {
         'username': '1073534788',
-        'password': '9f87GK8ar',
+        'password': STAFF_PASSWORD,
         'is_superuser': False,
         'is_staff': False,
         'role_id': Roles.AGENTE.value,
@@ -258,7 +258,7 @@ users = [
     },
     {
         'username': '1019066427',
-        'password': 'O24cMlg7NfA',
+        'password': STAFF_PASSWORD,
         'is_superuser': False,
         'is_staff': False,
         'role_id': Roles.AGENTE.value,
@@ -268,7 +268,7 @@ users = [
     },
     {
         'username': '1033795460',
-        'password': 'e6i4tLQ0P',
+        'password': STAFF_PASSWORD,
         'is_superuser': False,
         'is_staff': False,
         'role_id': Roles.AGENTE.value,
@@ -278,7 +278,7 @@ users = [
     },
     {
         'username': '1018475732',
-        'password': '72GIiLnn3',
+        'password': STAFF_PASSWORD,
         'is_superuser': False,
         'is_staff': False,
         'role_id': Roles.AGENTE.value,
@@ -288,7 +288,7 @@ users = [
     },
     {
         'username': '1026296099',
-        'password': '1a0Ir99MTt',
+        'password': STAFF_PASSWORD,
         'is_superuser': False,
         'is_staff': False,
         'role_id': Roles.AGENTE.value,
@@ -298,7 +298,7 @@ users = [
     },
     {
         'username': '1010190614',
-        'password': 'F64a14gbV',
+        'password': STAFF_PASSWORD,
         'is_superuser': False,
         'is_staff': False,
         'role_id': Roles.AGENTE.value,
@@ -308,7 +308,7 @@ users = [
     },
     {
         'username': '1014298380',
-        'password': 'R2a30DnO8',
+        'password': STAFF_PASSWORD,
         'is_superuser': False,
         'is_staff': False,
         'role_id': Roles.AGENTE.value,
@@ -318,7 +318,7 @@ users = [
     },
     {
         'username': '1233909497',
-        'password': 'nAXvi47g9',
+        'password': STAFF_PASSWORD,
         'is_superuser': False,
         'is_staff': False,
         'role_id': Roles.AGENTE.value,
@@ -328,7 +328,7 @@ users = [
     },
     {
         'username': '1015468050',
-        'password': '080i54eLn',
+        'password': STAFF_PASSWORD,
         'is_superuser': False,
         'is_staff': False,
         'role_id': Roles.AGENTE.value,
@@ -338,7 +338,7 @@ users = [
     },
     {
         'username': '1019129274',
-        'password': '2a75txr4B',
+        'password': STAFF_PASSWORD,
         'is_superuser': False,
         'is_staff': False,
         'role_id': Roles.AGENTE.value,
@@ -348,7 +348,7 @@ users = [
     },
     {
         'username': '1030634539',
-        'password': '7j3579eLVpi',
+        'password': STAFF_PASSWORD,
         'is_superuser': False,
         'is_staff': False,
         'role_id': Roles.AGENTE.value,
@@ -358,7 +358,7 @@ users = [
     },
     {
         'username': '1070708601',
-        'password': '0S1a6grYBk',
+        'password': STAFF_PASSWORD,
         'is_superuser': False,
         'is_staff': False,
         'role_id': Roles.AGENTE.value,
@@ -368,7 +368,7 @@ users = [
     },
     {
         'username': '1016070363',
-        'password': 'Qa36mPu3b',
+        'password': STAFF_PASSWORD,
         'is_superuser': False,
         'is_staff': False,
         'role_id': Roles.AGENTE.value,
@@ -378,7 +378,7 @@ users = [
     },
     {
         'username': '1233894266',
-        'password': '6vb2I1P8u6a',
+        'password': STAFF_PASSWORD,
         'is_superuser': False,
         'is_staff': False,
         'role_id': Roles.AGENTE.value,
@@ -388,7 +388,7 @@ users = [
     },
     {
         'username': '1233510409',
-        'password': 'eGnMh9H04y',
+        'password': STAFF_PASSWORD,
         'is_superuser': False,
         'is_staff': False,
         'role_id': Roles.AGENTE.value,
@@ -398,7 +398,7 @@ users = [
     },
     {
         'username': '1024597323',
-        'password': 'Le3B2u8aQ3',
+        'password': STAFF_PASSWORD,
         'is_superuser': False,
         'is_staff': False,
         'role_id': Roles.AGENTE.value,
@@ -408,7 +408,7 @@ users = [
     },
     {
         'username': '1000474626',
-        'password': 'SJ2Jus6z6a',
+        'password': STAFF_PASSWORD,
         'is_superuser': False,
         'is_staff': False,
         'role_id': Roles.AGENTE.value,
@@ -418,7 +418,7 @@ users = [
     },
     {
         'username': '1001198899',
-        'password': '9WnBes8n9Y',
+        'password': STAFF_PASSWORD,
         'is_superuser': False,
         'is_staff': False,
         'role_id': Roles.AGENTE.value,
@@ -428,7 +428,7 @@ users = [
     },
     {
         'username': '1005361978',
-        'password': 'sfT7GtO9a8Q',
+        'password': STAFF_PASSWORD,
         'is_superuser': False,
         'is_staff': False,
         'role_id': Roles.AGENTE.value,
@@ -438,7 +438,7 @@ users = [
     },
     {
         'username': '1075689778',
-        'password': 'YpsN787Ee',
+        'password': STAFF_PASSWORD,
         'is_superuser': False,
         'is_staff': False,
         'role_id': Roles.AGENTE.value,
@@ -448,7 +448,7 @@ users = [
     },
     {
         'username': '1018485067',
-        'password': '7iP06pjzrC',
+        'password': STAFF_PASSWORD,
         'is_superuser': False,
         'is_staff': False,
         'role_id': Roles.AGENTE.value,
@@ -458,7 +458,7 @@ users = [
     },
     {
         'username': '1020834343',
-        'password': 'AndZ43D3i',
+        'password': STAFF_PASSWORD,
         'is_superuser': False,
         'is_staff': False,
         'role_id': Roles.AGENTE.value,
@@ -468,7 +468,7 @@ users = [
     },
     {
         'username': '1023014334',
-        'password': '4JE3hoV33',
+        'password': STAFF_PASSWORD,
         'is_superuser': False,
         'is_staff': False,
         'role_id': Roles.AGENTE.value,
@@ -478,7 +478,7 @@ users = [
     },
     {
         'username': '1026305493',
-        'password': 'sCesOTc394',
+        'password': STAFF_PASSWORD,
         'is_superuser': False,
         'is_staff': False,
         'role_id': Roles.AGENTE.value,
@@ -488,7 +488,7 @@ users = [
     },
     {
         'username': '1024566293',
-        'password': 'njJ329hTSo',
+        'password': STAFF_PASSWORD,
         'is_superuser': False,
         'is_staff': False,
         'role_id': Roles.AGENTE.value,
@@ -498,7 +498,7 @@ users = [
     },
     {
         'username': '1020790225',
-        'password': '2Xo25sL5yJ',
+        'password': STAFF_PASSWORD,
         'is_superuser': False,
         'is_staff': False,
         'role_id': Roles.AGENTE.value,
@@ -508,7 +508,7 @@ users = [
     },
     {
         'username': '1010212990',
-        'password': 'nF9a9Br0oS',
+        'password': STAFF_PASSWORD,
         'is_superuser': False,
         'is_staff': False,
         'role_id': Roles.AGENTE.value,
@@ -518,7 +518,7 @@ users = [
     },
     {
         'username': '1072431399',
-        'password': '9n9Lb36IeJz',
+        'password': STAFF_PASSWORD,
         'is_superuser': False,
         'is_staff': False,
         'role_id': Roles.AGENTE.value,
@@ -528,7 +528,7 @@ users = [
     },
     {
         'username': '1000774779',
-        'password': 'auD97Puv7n',
+        'password': STAFF_PASSWORD,
         'is_superuser': False,
         'is_staff': False,
         'role_id': Roles.AGENTE.value,
@@ -538,7 +538,7 @@ users = [
     },
     {
         'username': '1026566792',
-        'password': 'Pi2o9ea7XM',
+        'password': STAFF_PASSWORD,
         'is_superuser': False,
         'is_staff': False,
         'role_id': Roles.AGENTE.value,
@@ -548,7 +548,7 @@ users = [
     },
     {
         'username': '1020784595',
-        'password': '5K8LizQ9h5',
+        'password': STAFF_PASSWORD,
         'is_superuser': False,
         'is_staff': False,
         'role_id': Roles.AGENTE.value,
@@ -558,7 +558,7 @@ users = [
     },
     {
         'username': '1233893088',
-        'password': '7bnDa80L8',
+        'password': STAFF_PASSWORD,
         'is_superuser': False,
         'is_staff': False,
         'role_id': Roles.AGENTE.value,
@@ -568,7 +568,7 @@ users = [
     },
     {
         'username': '1007754615',
-        'password': '5tXS61rGi',
+        'password': STAFF_PASSWORD,
         'is_superuser': False,
         'is_staff': False,
         'role_id': Roles.AGENTE.value,
@@ -578,7 +578,7 @@ users = [
     },
     {
         'username': '1233904106',
-        'password': '6C002l1aA',
+        'password': STAFF_PASSWORD,
         'is_superuser': False,
         'is_staff': False,
         'role_id': Roles.AGENTE.value,
@@ -588,7 +588,7 @@ users = [
     },
     {
         'username': '1023926952',
-        'password': '9Edg52NHr9P',
+        'password': STAFF_PASSWORD,
         'is_superuser': False,
         'is_staff': False,
         'role_id': Roles.AGENTE.value,
@@ -598,7 +598,7 @@ users = [
     },
     {
         'username': '1010201830',
-        'password': '0aMrCr348',
+        'password': STAFF_PASSWORD,
         'is_superuser': False,
         'is_staff': False,
         'role_id': Roles.AGENTE.value,
@@ -608,7 +608,7 @@ users = [
     },
     {
         'username': '1019111465',
-        'password': 'e4lJfnFw56',
+        'password': STAFF_PASSWORD,
         'is_superuser': False,
         'is_staff': False,
         'role_id': Roles.AGENTE.value,
@@ -618,7 +618,7 @@ users = [
     },
     {
         'username': '1019072288',
-        'password': 'auP8pA82U',
+        'password': STAFF_PASSWORD,
         'is_superuser': False,
         'is_staff': False,
         'role_id': Roles.AGENTE.value,
@@ -628,7 +628,7 @@ users = [
     },
     {
         'username': '1070925607',
-        'password': 'JuS6aopz70',
+        'password': STAFF_PASSWORD,
         'is_superuser': False,
         'is_staff': False,
         'role_id': Roles.AGENTE.value,
@@ -638,7 +638,7 @@ users = [
     },
     {
         'username': '1000251299',
-        'password': 'SrtAgD9n29',
+        'password': STAFF_PASSWORD,
         'is_superuser': False,
         'is_staff': False,
         'role_id': Roles.AGENTE.value,
@@ -648,7 +648,7 @@ users = [
     },
     {
         'username': '1014228575',
-        'password': 'Vn55iaZE7',
+        'password': STAFF_PASSWORD,
         'is_superuser': False,
         'is_staff': False,
         'role_id': Roles.AGENTE.value,
@@ -658,7 +658,7 @@ users = [
     },
     {
         'username': '1016074186',
-        'password': 'a6T1aniIS8',
+        'password': STAFF_PASSWORD,
         'is_superuser': False,
         'is_staff': False,
         'role_id': Roles.AGENTE.value,
@@ -668,7 +668,7 @@ users = [
     },
     {
         'username': '1030675742',
-        'password': 'ev2E7sCE4Yi',
+        'password': STAFF_PASSWORD,
         'is_superuser': False,
         'is_staff': False,
         'role_id': Roles.AGENTE.value,
@@ -678,7 +678,7 @@ users = [
     },
     {
         'username': '1010074249',
-        'password': 'j9t2KRZu4',
+        'password': STAFF_PASSWORD,
         'is_superuser': False,
         'is_staff': False,
         'role_id': Roles.AGENTE.value,
@@ -688,7 +688,7 @@ users = [
     },
     {
         'username': '1049640850',
-        'password': '8tanC06A5yC',
+        'password': STAFF_PASSWORD,
         'is_superuser': False,
         'is_staff': False,
         'role_id': Roles.AGENTE.value,
@@ -698,7 +698,7 @@ users = [
     },
     {
         'username': '1033753747',
-        'password': '7Qp47Afnkd',
+        'password': STAFF_PASSWORD,
         'is_superuser': False,
         'is_staff': False,
         'role_id': Roles.AGENTE.value,
@@ -708,7 +708,7 @@ users = [
     },
     {
         'username': '1014268753',
-        'password': 'TA7cgs3no5',
+        'password': STAFF_PASSWORD,
         'is_superuser': False,
         'is_staff': False,
         'role_id': Roles.AGENTE.value,
@@ -718,7 +718,7 @@ users = [
     },
     {
         'username': '1023908035',
-        'password': '0j653PorDia',
+        'password': STAFF_PASSWORD,
         'is_superuser': False,
         'is_staff': False,
         'role_id': Roles.AGENTE.value,
@@ -728,7 +728,7 @@ users = [
     },
     {
         'username': '1019044498',
-        'password': 'Sho8zJ4tS9',
+        'password': STAFF_PASSWORD,
         'is_superuser': False,
         'is_staff': False,
         'role_id': Roles.AGENTE.value,
@@ -738,7 +738,7 @@ users = [
     },
     {
         'username': '1000504570',
-        'password': '0qr5afb7Ko9',
+        'password': STAFF_PASSWORD,
         'is_superuser': False,
         'is_staff': False,
         'role_id': Roles.AGENTE.value,
@@ -748,7 +748,7 @@ users = [
     },
     {
         'username': '1001349527',
-        'password': 'BN72l5cOiL',
+        'password': STAFF_PASSWORD,
         'is_superuser': False,
         'is_staff': False,
         'role_id': Roles.AGENTE.value,
@@ -758,7 +758,7 @@ users = [
     },
     {
         'username': '1010242892',
-        'password': 'rvaJS829A',
+        'password': STAFF_PASSWORD,
         'is_superuser': False,
         'is_staff': False,
         'role_id': Roles.AGENTE.value,
@@ -768,7 +768,7 @@ users = [
     },
     {
         'username': '1014302690',
-        'password': 'ahuX690Phq',
+        'password': STAFF_PASSWORD,
         'is_superuser': False,
         'is_staff': False,
         'role_id': Roles.AGENTE.value,
@@ -778,7 +778,7 @@ users = [
     },
     {
         'username': '1192789179',
-        'password': 'F9xWraO71MN',
+        'password': STAFF_PASSWORD,
         'is_superuser': False,
         'is_staff': False,
         'role_id': Roles.AGENTE.value,
@@ -788,7 +788,7 @@ users = [
     },
     {
         'username': '1016060303',
-        'password': 'ab3MP0Ou3',
+        'password': STAFF_PASSWORD,
         'is_superuser': False,
         'is_staff': False,
         'role_id': Roles.AGENTE.value,
@@ -798,7 +798,7 @@ users = [
     },
     {
         'username': '1012453558',
-        'password': 'C5aD5h88r',
+        'password': STAFF_PASSWORD,
         'is_superuser': False,
         'is_staff': False,
         'role_id': Roles.AGENTE.value,
@@ -808,7 +808,7 @@ users = [
     },
     {
         'username': '1143460282',
-        'password': '28iJDTjf2p',
+        'password': STAFF_PASSWORD,
         'is_superuser': False,
         'is_staff': False,
         'role_id': Roles.AGENTE.value,
@@ -818,7 +818,7 @@ users = [
     },
     {
         'username': '1010190037',
-        'password': 'L7uts30iU',
+        'password': STAFF_PASSWORD,
         'is_superuser': False,
         'is_staff': False,
         'role_id': Roles.SUPERVISOR.value,
@@ -828,7 +828,7 @@ users = [
     },
     {
         'username': '53001640',
-        'password': '4o0cRu3m76',
+        'password': STAFF_PASSWORD,
         'is_superuser': False,
         'is_staff': False,
         'role_id': Roles.SUPERVISOR.value,
@@ -838,7 +838,7 @@ users = [
     },
     {
         'username': '1047221420',
-        'password': '46yy02aMZrQ',
+        'password': STAFF_PASSWORD,
         'is_superuser': False,
         'is_staff': False,
         'role_id': Roles.SUPERVISOR.value,
@@ -848,7 +848,7 @@ users = [
     },
     {
         'username': '1000853511',
-        'password': 'H61Da15rK',
+        'password': STAFF_PASSWORD,
         'is_superuser': False,
         'is_staff': False,
         'role_id': Roles.SUPERVISOR.value,
@@ -858,7 +858,7 @@ users = [
     },
     {
         'username': '80020015',
-        'password': 'P1SJ0zhN5o',
+        'password': STAFF_PASSWORD,
         'is_superuser': False,
         'is_staff': False,
         'role_id': Roles.SUPERVISOR.value,
@@ -868,7 +868,7 @@ users = [
     },
     {
         'username': '79601326',
-        'password': 'o6rORJ632',
+        'password': STAFF_PASSWORD,
         'is_superuser': False,
         'is_staff': False,
         'role_id': Roles.SUPERVISOR.value,
