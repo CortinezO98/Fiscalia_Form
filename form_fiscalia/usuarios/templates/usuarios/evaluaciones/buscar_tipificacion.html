@@ -33,7 +33,6 @@
         <table class="table table-hover align-middle mb-0">
             <thead class="table-primary">
                 <tr>
-                    <th>#</th>
                     <th>Fecha</th>
                     <th>Tipo Doc.</th>
                     <th>Documento</th>
@@ -42,7 +41,6 @@
                     <th>Segmento</th>
                     <th>Tipificación</th>
                     <th>Categoría</th>
-                    <th>C. Padre</th>
                     <th>Observación</th>
                     <th>Usuario</th>
                 </tr>
@@ -50,7 +48,6 @@
             <tbody>
                 {% for ev in evaluaciones %}
                 <tr>
-                    <td class="text-center">{{ forloop.counter }}</td>
                     <td>{{ ev.fecha|date:"d/m/Y H:i" }}</td>
                     <td>{{ ev.ciudadano.tipo_identificacion.nombre }}</td>
                     <td class="fw-bold">{{ ev.ciudadano.numero_identificacion }}</td>
@@ -59,13 +56,6 @@
                     <td>{{ ev.categoria.tipificacion.segmento.nombre }}</td>
                     <td>{{ ev.categoria.tipificacion.nombre }}</td>
                     <td>{{ ev.categoria.nombre }}</td>
-                    <td>
-                        {% if ev.categoria.categoria_padre %}
-                        {{ ev.categoria.categoria_padre.nombre }}
-                        {% else %}
-                        —
-                        {% endif %}
-                    </td>
                     <td>{{ ev.observacion|truncatechars:50 }}</td>
                     <td>{{ ev.user.username }}</td>
                 </tr>

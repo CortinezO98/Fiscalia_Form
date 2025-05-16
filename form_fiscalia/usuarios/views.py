@@ -71,13 +71,24 @@ def logout_view(request):
 @login_required
 @en_grupo([Roles.AGENTE.value])
 def dashboard_agente(request):
+    query = request.GET.get('q', '').strip()
+    qs = Evaluacion.objects.filter(user=request.user).select_related('ciudadano', 'categoria')
 
+    if query:
+        qs = qs.filter(ciudadano__numero_identificacion__icontains=query)
 
-    context = {
-        
-    }
-    
-    return render(request, 'usuarios/dashboard_agente.html', context)
+    qs = qs.order_by('-fecha')
+    paginator = Paginator(qs, 10)
+    page_num = request.GET.get('page') or 1
+    page_obj = paginator.get_page(page_num)
+
+    return render(request, 'usuarios/dashboard_agente.html', {
+        'evaluaciones': page_obj,
+        'paginator':    paginator,
+        'page_obj':     page_obj,
+        'is_paginated': page_obj.has_other_pages(),
+        'query':        query,
+    })
 
 
 @login_required
@@ -85,7 +96,6 @@ def dashboard_agente(request):
 def dashboard_supervisor(request):
     hoy = timezone.localdate()
 
-    # 1) Conteos
     total_evaluaciones = Evaluacion.objects.count()
     evaluaciones_hoy   = Evaluacion.objects.filter(fecha__date=hoy).count()
 
@@ -94,7 +104,7 @@ def dashboard_supervisor(request):
         groups__name=Roles.AGENTE.value
     ).count()
 
-    # 2) Cálculo de eficiencia
+
     if agentes_activos > 0:
         eficiencia = round((evaluaciones_hoy / agentes_activos) * 100, 1)
     else:
