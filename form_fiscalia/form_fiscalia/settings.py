@@ -18,6 +18,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 load_dotenv(dotenv_path=BASE_DIR / ".env")
 
+ENV_APP = os.environ.get('ENV_APP', 'local')
+IN_PRODUCTION = ENV_APP != 'local'
+
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
@@ -25,13 +28,15 @@ load_dotenv(dotenv_path=BASE_DIR / ".env")
 SECRET_KEY = 'django-insecure-g92ofvy03gl(f+nkm4jt03ypz=uxb1+ixtd($6h*l3c+mt&f*6'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = not IN_PRODUCTION
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = ['' if IN_PRODUCTION else '*']
 
-CSRF_TRUSTED_ORIGINS = [
-    'https://typifica.grupoasd.com/',
-]
+if IN_PRODUCTION:
+    CSRF_TRUSTED_ORIGINS = [
+        'https://typifica.grupoasd.com/',
+    ]
+
 # Application definition
 
 INSTALLED_APPS = [
@@ -81,20 +86,27 @@ WSGI_APPLICATION = 'form_fiscalia.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
-
-DATABASES = {
-    'default': {
-        # 'ENGINE': 'django.db.backends.mysql',
-        # 'NAME': 'nombre_bd',
-        # 'USER': 'usuario_mysql',
-        # 'PASSWORD': 'contraseña_mysql',
-        # 'HOST': 'localhost',
-        # 'PORT': '3306',
-
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+if IN_PRODUCTION:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.mysql',
+            'NAME': os.environ.get('DB_NAME'),
+            'USER': os.environ.get('DB_USER'),
+            'PASSWORD': os.environ.get('DB_PASSWORD'),
+            'HOST': os.environ.get('DB_HOST'),
+            'PORT': '3306',
+            'OPTIONS': {
+                'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",
+            }
+        }
     }
-}
+else:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': BASE_DIR / f"db.{os.environ.get('SQLITE_NAME', 'sqlite3')}",
+        }
+    }
 
 
 # Password validation
@@ -146,9 +158,10 @@ LOGIN_URL = '/'
 LOGIN_REDIRECT_URL = '/'
 
 # Seguridad HTTPS
-SECURE_SSL_REDIRECT = True
-SESSION_COOKIE_SECURE = True
-CSRF_COOKIE_SECURE = True
-SECURE_HSTS_SECONDS = 31536000
-SECURE_HSTS_INCLUDE_SUBDOMAINS = True
-SECURE_HSTS_PRELOAD = True
+if IN_PRODUCTION:
+    SECURE_SSL_REDIRECT = True
+    SESSION_COOKIE_SECURE = True
+    CSRF_COOKIE_SECURE = True
+    SECURE_HSTS_SECONDS = 31536000
+    SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+    SECURE_HSTS_PRELOAD = True
