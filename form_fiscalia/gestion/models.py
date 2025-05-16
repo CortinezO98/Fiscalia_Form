@@ -61,7 +61,10 @@ class Categoria(models.Model):
         ordering = ['nombre']
 
     def __str__(self):
-        return self.nombre
+        if self.tipificacion:
+            return f"{self.nombre} [{self.nivel}] - {self.tipificacion} - {self.tipificacion.segmento.nombre}"
+        else:
+            return f"{self.nombre} [{self.nivel}] - {self.categoria_padre.nombre}"
 
 
 class Evaluacion(models.Model):

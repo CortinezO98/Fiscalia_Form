@@ -2,6 +2,7 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from django.contrib import messages
+from django.db import transaction
 import csv
 from usuarios.views import ValidarRolUsuario, en_grupo
 from usuarios.enums import Roles
@@ -26,8 +27,29 @@ def index(request):
 @en_grupo([Roles.ADMINISTRADOR.value, Roles.SUPERVISOR.value, Roles.AGENTE.value])
 def crear_evaluacion(request):
     if request.method == 'POST':
-        # Aquí iría la lógica para crear una evaluación
-        pass
+        try:
+            with transaction.atomic():
+                ciudadano = None
+                if request.POST.get('cuidadano_id'):
+                    ciudadano = Ciudadano.objects.filter(id=request.POST.get('cuidadano_id')).first()
+                if not ciudadano:
+                    ciudadano = Ciudadano.objects.create(
+                        tipo_identificacion_id=request.POST.get('tipo_identificacion'),
+                        numero_identificacion=request.POST.get('numero_identificacion'),
+                        nombre=request.POST.get('nombre')
+                    )
+
+                evaluacion = Evaluacion.objects.create(
+                    conversacion_id = request.POST.get('conversacion_id'),
+                    observacion = request.POST.get('observacion'),
+                    ciudadano = ciudadano,
+                    categoria_id = request.POST.get('subcategoria') if request.POST.get('subcategoria') else request.POST.get('categoria'),
+                    user = request.user
+                )
+                messages.success(request, "Evaluación guardada correctamente.")
+        except Exception as e:
+            messages.error(request, "Ocurrió un error al guardar la evaluación.")
+        return redirect('index')
     
     tiposIdentificacion = TipoIdentificacion.objects.all()
     segmentos = Segmento.objects.all()
