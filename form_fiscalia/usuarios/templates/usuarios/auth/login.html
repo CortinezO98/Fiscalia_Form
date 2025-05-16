@@ -46,19 +46,4 @@
     </div>
   </div>
 </div>
-{% if messages %}
-<script>
-  document.addEventListener('DOMContentLoaded', function () {
-    {% for message in messages %}
-    Swal.fire({
-      icon: '{% if message.tags == "success" %}success{% elif message.tags == "error" or message.tags == "danger" %}error{% else %}info{% endif %}',
-      title: '{{ message }}',
-      confirmButtonColor: '#3085d6',
-      confirmButtonText: 'Aceptar'
-    });
-    {% endfor %}
-  });
-</script>
-{% endif %}
-
 {% endblock %}

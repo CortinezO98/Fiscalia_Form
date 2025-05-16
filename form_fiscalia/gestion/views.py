@@ -1,6 +1,7 @@
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
+from django.contrib import messages
 import csv
 from usuarios.views import ValidarRolUsuario, en_grupo
 from usuarios.enums import Roles
@@ -28,9 +29,16 @@ def crear_evaluacion(request):
         # Aquí iría la lógica para crear una evaluación
         pass
     
+    tiposIdentificacion = TipoIdentificacion.objects.all()
+    segmentos = Segmento.objects.all()
+
+    if not tiposIdentificacion or not segmentos:
+        messages.warning(request, "En este momento no es posible generar una tipificación. Por favor, contacte a soporte.")
+        return redirect('index')
+
     context = {
-        "tiposIdentificacion": TipoIdentificacion.objects.all(),
-        "segmentos": Segmento.objects.all(),
+        "tiposIdentificacion": tiposIdentificacion,
+        "segmentos": segmentos,
     }
 
     return render(request, 'usuarios/evaluaciones/crear_evaluacion.html', context)

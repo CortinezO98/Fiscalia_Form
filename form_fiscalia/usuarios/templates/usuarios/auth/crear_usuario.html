@@ -264,18 +264,6 @@ document.getElementById('crearUsuarioForm').addEventListener('submit', function(
   }
 });
 
-// Mostrar mensajes de Django
-{% if messages %}
-  {% for message in messages %}
-    Swal.fire({
-      icon: '{{ message.tags }}',
-      title: '{{ message|escapejs }}',
-      confirmButtonColor: '#0d6efd',
-      timer: 3000
-    });
-  {% endfor %}
-{% endif %}
-
 // Inicializar verificación si hay valores al cargar
 document.addEventListener('DOMContentLoaded', function() {
   if (document.getElementById('id_password').value || 

@@ -178,12 +178,12 @@
                             $('#tipificacion').append(`<option value="${tip.id}">${tip.nombre}</option>`);
                         });
                     } else {
-                        $('#tipificacion').append('<option value="" disabled>No hay tipificaciones</option>');
+                        MostrarMensaje('El segmento seleccionado no tiene tipificaciones. No podrás guardar esta evaluación.');
                     }
                 },
                 error: function(xhr) {
-                    console.error("Error al cargar tipificaciones:", xhr);
-                    $('#tipificacion').empty().append('<option value="" disabled>Error al cargar</option>');
+                    console.error("Error al cargar tipificaciones");
+                    MostrarMensaje('El segmento seleccionado no tiene tipificaciones. No podrás guardar esta evaluación.');
                 }
             });
         });
@@ -210,12 +210,12 @@
                             $('#categoria').append(`<option value="${cat.id}">${cat.nombre}</option>`);
                         });
                     } else {
-                        $('#categoria').append('<option value="" disabled>No hay categorías</option>');
+                        MostrarMensaje('La tipificación seleccionada no tiene categorías. No podrás guardar esta evaluación.');
                     }
                 },
                 error: function(xhr) {
-                    console.error("Error al cargar categorías:", xhr);
-                    $('#categoria').empty().append('<option value="" disabled>Error al cargar</option>');
+                    console.error("Error al cargar categorías:");
+                    MostrarMensaje('La tipificación seleccionada no tiene categorías. No podrás guardar esta evaluación.');
                 }
             });
         });
@@ -248,17 +248,20 @@
                         // Mostrar el div y marcar el campo como requerido
                         $('#subcategoria').prop('required', true);
                         $('#subcategoria').closest('.col-md-6').removeAttr('hidden');
-                    } else {
-                        // No hay subcategorías, mantener el select oculto
-                        $('#subcategoria').empty().append('<option value="" disabled selected>Sin subcategorías</option>');
                     }
                 },
                 error: function(xhr) {
-                    console.error("Error al cargar subcategorías:", xhr);
-                    $('#subcategoria').empty().append('<option value="" disabled>Error al cargar</option>');
+                    console.error("Error al cargar subcategorías:");
                 }
             });
         });
+
+        function MostrarMensaje(mensaje){
+            Swal.fire({
+                text: mensaje,
+                icon: "warning"
+            });
+        }
 
     });
 </script>

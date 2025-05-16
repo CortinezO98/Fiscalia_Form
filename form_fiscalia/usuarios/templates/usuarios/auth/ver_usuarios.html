@@ -234,29 +234,6 @@
             });
         });
 
-        // Mostrar mensajes del sistema con SweetAlert mejorado
-        {% if messages %}
-        {% for message in messages %}
-        Swal.fire({
-            position: 'top-end',
-            icon: '{{ message.tags }}',
-            title: '{{ message|escapejs }}',
-            showConfirmButton: false,
-            timer: 3000,
-            timerProgressBar: true,
-            toast: true,
-            background: '#f8f9fa',
-            backdrop: false,
-            showClass: {
-                popup: 'animate__animated animate__fadeInDown animate__faster'
-            },
-            hideClass: {
-                popup: 'animate__animated animate__fadeOutUp animate__faster'
-            }
-        });
-        {% endfor %}
-        {% endif %}
-
         // Toggle estado de usuario con SweetAlerts mejorados
         document.querySelectorAll('.toggle-user-status').forEach(button => {
             button.addEventListener('click', function () {
