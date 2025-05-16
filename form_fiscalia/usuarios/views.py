@@ -16,6 +16,7 @@ from django.http import JsonResponse
 from django.views.decorators.http import require_POST
 from django.db.models import Q
 from .models import *
+from gestion.models import *
 from django.utils import timezone
 from django.http import HttpResponseForbidden
 from django.utils.timezone import make_aware
@@ -82,16 +83,35 @@ def dashboard_agente(request):
 @login_required
 @en_grupo([Roles.SUPERVISOR.value])
 def dashboard_supervisor(request):
-    # agentes_activos = Agente.objects.filter(activo=True).count() 
-    # total_evaluaciones = Evaluacion.objects.count()
-    # evaluaciones_hoy = Evaluacion.objects.filter(fecha_creacion__date=localtime(now()).date()).count()
-    # eficiencia = round((evaluaciones_hoy / agentes_activos * 100), 2) if agentes_activos > 0 else 0.0
+    hoy = timezone.localdate()
+
+    # 1) Conteos
+    total_evaluaciones = Evaluacion.objects.count()
+    evaluaciones_hoy   = Evaluacion.objects.filter(fecha__date=hoy).count()
+
+    agentes_activos = User.objects.filter(
+        is_active=True,
+        groups__name=Roles.AGENTE.value
+    ).count()
+
+    # 2) Cálculo de eficiencia
+    if agentes_activos > 0:
+        eficiencia = round((evaluaciones_hoy / agentes_activos) * 100, 1)
+    else:
+        eficiencia = 0.0
+
+    actividad_reciente = (
+        Evaluacion.objects
+        .select_related('ciudadano', 'categoria__tipificacion__segmento', 'categoria__categoria_padre', 'user')
+        .order_by('-fecha')[:5]
+    )
 
     context = {
-        # 'total_evaluaciones': total_evaluaciones,
-        # 'evaluaciones_hoy': evaluaciones_hoy,
-        # 'agentes_activos': agentes_activos,
-        # 'eficiencia': eficiencia
+        'total_evaluaciones': total_evaluaciones,
+        'evaluaciones_hoy':   evaluaciones_hoy,
+        'agentes_activos':    agentes_activos,
+        'eficiencia':         eficiencia,
+        'actividad_reciente': actividad_reciente,
     }
     return render(request, 'usuarios/dashboard_supervisor.html', context)
 

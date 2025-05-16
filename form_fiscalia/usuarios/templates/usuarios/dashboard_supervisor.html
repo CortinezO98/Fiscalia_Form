@@ -14,7 +14,9 @@
                                 <i class="bi bi-speedometer2 me-2"></i>Panel del Supervisor
                             </h1>
                             <div class="d-flex align-items-center gap-2">
-                                <p class="text-muted mb-0">Bienvenido, {{ request.user.get_full_name|default:request.user.username }}</p>
+                                <p class="text-muted mb-0">
+                                    Bienvenido, {{ request.user.get_full_name|default:request.user.username }}
+                                </p>
                                 <span class="badge bg-primary bg-opacity-10 text-primary">
                                     <i class="bi bi-patch-check-fill me-1"></i>Verificado
                                 </span>
@@ -29,65 +31,58 @@
                     
                     <!-- Estadísticas Rápidas -->
                     <div class="row g-4 mb-4">
+                        <!-- Total Evaluaciones -->
                         <div class="col-12 col-md-6 col-xl-3">
                             <div class="card bg-primary bg-opacity-10 border-0 h-100">
-                                <div class="card-body">
-                                    <div class="d-flex align-items-center gap-3">
-                                        <div class="icon-square bg-primary text-white rounded-3 p-3">
-                                            <i class="bi bi-files fs-4"></i>
-                                        </div>
-                                        <div>
-                                            <h3 class="mb-0 fw-bold">{{ total_evaluaciones|intcomma }}</h3>
-                                            <small class="text-muted">Evaluaciones Totales</small>
-                                        </div>
+                                <div class="card-body d-flex align-items-center gap-3">
+                                    <div class="icon-square bg-primary text-white rounded-3 p-3">
+                                        <i class="bi bi-files fs-4"></i>
+                                    </div>
+                                    <div>
+                                        <h3 class="mb-0 fw-bold">{{ total_evaluaciones|intcomma }}</h3>
+                                        <small class="text-muted">Evaluaciones Totales</small>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                        
+                        <!-- Evaluaciones Hoy -->
                         <div class="col-12 col-md-6 col-xl-3">
                             <div class="card bg-success bg-opacity-10 border-0 h-100">
-                                <div class="card-body">
-                                    <div class="d-flex align-items-center gap-3">
-                                        <div class="icon-square bg-success text-white rounded-3 p-3">
-                                            <i class="bi bi-calendar-day fs-4"></i>
-                                        </div>
-                                        <div>
-                                            <h3 class="mb-0 fw-bold">{{ evaluaciones_hoy|intcomma }}</h3>
-                                            <small class="text-muted">Hoy</small>
-                                        </div>
+                                <div class="card-body d-flex align-items-center gap-3">
+                                    <div class="icon-square bg-success text-white rounded-3 p-3">
+                                        <i class="bi bi-calendar-day fs-4"></i>
+                                    </div>
+                                    <div>
+                                        <h3 class="mb-0 fw-bold">{{ evaluaciones_hoy|intcomma }}</h3>
+                                        <small class="text-muted">Hoy</small>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                        
+                        <!-- Eficiencia -->
                         <div class="col-12 col-md-6 col-xl-3">
                             <div class="card bg-info bg-opacity-10 border-0 h-100">
-                                <div class="card-body">
-                                    <div class="d-flex align-items-center gap-3">
-                                        <div class="icon-square bg-info text-white rounded-3 p-3">
-                                            <i class="bi bi-clock-history fs-4"></i>
-                                        </div>
-                                        <div>
-                                            <h3 class="mb-0 fw-bold">{{ eficiencia|floatformat:1 }}%</h3>
-                                            <small class="text-muted">Eficiencia</small>
-                                        </div>
+                                <div class="card-body d-flex align-items-center gap-3">
+                                    <div class="icon-square bg-info text-white rounded-3 p-3">
+                                        <i class="bi bi-clock-history fs-4"></i>
+                                    </div>
+                                    <div>
+                                        <h3 class="mb-0 fw-bold">{{ eficiencia|floatformat:1 }}%</h3>
+                                        <small class="text-muted">Eficiencia</small>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                        
+                        <!-- Agentes Activos -->
                         <div class="col-12 col-md-6 col-xl-3">
                             <div class="card bg-purple bg-opacity-10 border-0 h-100">
-                                <div class="card-body">
-                                    <div class="d-flex align-items-center gap-3">
-                                        <div class="icon-square bg-purple text-white rounded-3 p-3">
-                                            <i class="bi bi-people fs-4"></i>
-                                        </div>
-                                        <div>
-                                            <h3 class="mb-0 fw-bold">{{ agentes_activos|intcomma }}</h3>
-                                            <small class="text-muted">Agentes Habilitados</small>
-                                        </div>
+                                <div class="card-body d-flex align-items-center gap-3">
+                                    <div class="icon-square bg-purple text-white rounded-3 p-3">
+                                        <i class="bi bi-people fs-4"></i>
+                                    </div>
+                                    <div>
+                                        <h3 class="mb-0 fw-bold">{{ agentes_activos|intcomma }}</h3>
+                                        <small class="text-muted">Agentes Habilitados</small>
                                     </div>
                                 </div>
                             </div>
@@ -165,29 +160,31 @@
                             <thead class="table-light">
                                 <tr>
                                     <th>Usuario</th>
-                                    <th>Acción</th>
-                                    <th>Detalle</th>
+                                    <th>Documento</th>
+                                    <th>Tipificación</th>
+                                    <th class="text-truncate">Observación</th>
                                     <th>Hora</th>
-                                    <th></th>
                                 </tr>
                             </thead>
                             <tbody>
-                                {% for evaluacion in actividad_reciente %}
-                                <tr>
-                                    <td class="fw-semibold">{{ evaluacion.agente.get_full_name|default:evaluacion.agente.username }}</td>
-                                    <td>Nueva tipificación</td>
-                                    <td>Evaluación #{{ evaluacion.id }}</td>
-                                    <td>{{ evaluacion.fecha_creacion|timesince }}</td>
-                                    <td class="text-end">
-                                        <a href="{% url 'detalle_evaluacion' evaluacion.id %}" class="btn btn-sm btn-outline-primary">
-                                            Ver
-                                        </a>
-                                    </td>
-                                </tr>
+                                {% for ev in actividad_reciente %}
+                                    <tr>
+                                        <td class="fw-semibold">
+                                            {{ ev.user.get_full_name|default:ev.user.username }}
+                                        </td>
+                                        <td>{{ ev.ciudadano.numero_identificacion }}</td>
+                                        <td>{{ ev.categoria.tipificacion.nombre }}</td>
+                                        <td class="text-truncate" style="max-width:200px;">
+                                            {{ ev.observacion|truncatechars:40 }}
+                                        </td>
+                                        <td>{{ ev.fecha|timesince }} atrás</td>
+                                    </tr>
                                 {% empty %}
-                                <tr>
-                                    <td colspan="5" class="text-center text-muted py-4">No hay actividad reciente</td>
-                                </tr>
+                                    <tr>
+                                        <td colspan="5" class="text-center text-muted py-4">
+                                            No hay actividad reciente
+                                        </td>
+                                    </tr>
                                 {% endfor %}
                             </tbody>
                         </table>
@@ -200,14 +197,9 @@
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    // Animación de hover para las tarjetas
     document.querySelectorAll('.shadow-hover-lg').forEach(card => {
-        card.addEventListener('mouseenter', function() {
-            this.style.transform = 'translateY(-5px)';
-        });
-        card.addEventListener('mouseleave', function() {
-            this.style.transform = 'translateY(0)';
-        });
+        card.addEventListener('mouseenter', () => card.style.transform = 'translateY(-5px)');
+        card.addEventListener('mouseleave', () => card.style.transform = 'translateY(0)');
     });
 });
 </script>

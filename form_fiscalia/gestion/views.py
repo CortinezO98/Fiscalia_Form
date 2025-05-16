@@ -4,7 +4,7 @@ from django.http import HttpResponse
 from django.contrib import messages
 from django.db import transaction
 from django.core.paginator import Paginator
-import csv
+from django.db.models import Q
 from django.views.decorators.http import require_GET
 from django.utils.timezone import make_aware, localtime
 from usuarios.views import ValidarRolUsuario, en_grupo
@@ -77,26 +77,43 @@ def crear_evaluacion(request):
 
 
 @login_required
-# @en_grupo([Roles.ADMINISTRADOR.value, Roles.SUPERVISOR.value, Roles.AGENTE.value])
+@en_grupo([Roles.ADMINISTRADOR.value, Roles.SUPERVISOR.value, Roles.AGENTE.value])
 def buscar_tipificacion(request):
-
+    """
+    Busca Evaluacion(s) únicamente por numero_identificacion (ciudadano),
+    paginadas de a 10. Devuelve todos los campos relacionados.
+    """
     query = request.GET.get('q', '').strip()
-    tipificaciones = Tipificacion.objects.none()
+    evaluaciones = Evaluacion.objects.none()
 
     if query:
-        tipificaciones = Tipificacion.objects.filter(
-            Q(evaluacion__ciudadano__numero_identificacion__icontains=query) |
-            Q(evaluacion__ciudadano__nombre__icontains=query) |
-            Q(evaluacion__id_conversacion__icontains=query)
-        ).select_related('evaluacion__ciudadano', 'opcion').order_by('-fecha_registro')
+        qs = (
+            Evaluacion.objects
+            .select_related(
+                'ciudadano__tipo_identificacion',
+                'categoria__tipificacion__segmento',
+                'categoria__categoria_padre',
+                'user'
+            )
+            .filter(ciudadano__numero_identificacion__icontains=query)
+            .order_by('-fecha')
+        )
 
-        paginator = Paginator(tipificaciones, 10)
-        page_number = request.GET.get('page')
-        tipificaciones = paginator.get_page(page_number)
+        paginator = Paginator(qs, 10)
+        page_number   = request.GET.get('page') or 1
+        evaluaciones  = paginator.get_page(page_number)
+    else:
+        paginator = None
 
     return render(request, 'usuarios/evaluaciones/buscar_tipificacion.html', {
-        'tipificaciones': tipificaciones
+        'evaluaciones': evaluaciones,
+        'paginator':    paginator,
+        'page_obj':     evaluaciones,
+        'is_paginated': evaluaciones.has_other_pages() if evaluaciones else False,
+        'query':        query,
     })
+
+
 
 
 @login_required
@@ -164,12 +181,10 @@ def exportar_excel(request):
         except ValueError:
             pass
 
-    # Crear libro y hoja
+
     wb = openpyxl.Workbook()
     ws = wb.active
     ws.title = "Reportes"
-
-    # Encabezados
     headers = [
         'Fecha', 'Tipo Documento', 'Número ID', 'Nombre',
         'ID Conversación', 'Segmento','Tipificación','Categoría','Categoría Padre',
@@ -178,7 +193,6 @@ def exportar_excel(request):
     for col, header in enumerate(headers, 1):
         ws.cell(row=1, column=col, value=header)
 
-    # Filas de datos
     for row_idx, ev in enumerate(qs.iterator(), start=2):
         ciu = ev.ciudadano
         cat = ev.categoria
@@ -198,16 +212,13 @@ def exportar_excel(request):
         for col, value in enumerate(data, 1):
             ws.cell(row=row_idx, column=col, value=value)
 
-    # Ajustar ancho de columnas
     for i, _ in enumerate(headers, 1):
         ws.column_dimensions[get_column_letter(i)].auto_size = True
 
-    # Guardar en un buffer
     buffer = BytesIO()
     wb.save(buffer)
     buffer.seek(0)
 
-    # Respuesta HTTP
     resp = HttpResponse(
         buffer,
         content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
