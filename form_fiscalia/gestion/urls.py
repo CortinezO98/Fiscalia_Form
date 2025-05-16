@@ -7,7 +7,9 @@ urlpatterns = [
     path('crear_evaluacion/', views.crear_evaluacion, name='crear_evaluacion'),
     path('buscar/', views.buscar_tipificacion, name='buscar_tipificacion'),
     path('reportes/', views.reportes_view, name='reportes'),
-    path('reportes/exportar/', views.exportar_csv, name='exportar_csv'),
+    path('reportes/exportar_excel/', views.exportar_excel, name='exportar_excel'),
+
+    
 
     # Endpoints API
     path('api/ciudadano/', api.ciudadano, name='ciudadano'),

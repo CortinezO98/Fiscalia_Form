@@ -3,10 +3,20 @@ from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from django.contrib import messages
 from django.db import transaction
+from django.core.paginator import Paginator
 import csv
+from django.views.decorators.http import require_GET
+from django.utils.timezone import make_aware, localtime
 from usuarios.views import ValidarRolUsuario, en_grupo
 from usuarios.enums import Roles
 from .models import *
+from io import BytesIO
+from datetime import date, datetime
+import openpyxl
+from openpyxl.utils import get_column_letter
+
+
+
 
 def index(request):
     if request.user.is_authenticated:
@@ -90,50 +100,117 @@ def buscar_tipificacion(request):
 
 
 @login_required
-# @en_grupo([Roles.ADMINISTRADOR.value, Roles.SUPERVISOR.value])
+@en_grupo([Roles.ADMINISTRADOR.value, Roles.SUPERVISOR.value, Roles.AGENTE.value])
 def reportes_view(request):
-
-    # reportes = Tipificacion.objects.all()
-    # fecha_inicio = request.GET.get('fecha_inicio')
-    # fecha_fin = request.GET.get('fecha_fin')
-
-    # if fecha_inicio and fecha_fin:
-    #     reportes = reportes.filter(fecha_registro__date__range=[fecha_inicio, fecha_fin])
-
-    return render(request, 'usuarios/reportes.html', {})
-
-
-@login_required
-# @en_grupo([Roles.ADMINISTRADOR.value, Roles.SUPERVISOR.value])
-def exportar_csv(request):
     fecha_inicio = request.GET.get('fecha_inicio')
-    fecha_fin = request.GET.get('fecha_fin')
+    fecha_fin    = request.GET.get('fecha_fin')
 
-    reportes = Tipificacion.objects.select_related('evaluacion__ciudadano', 'opcion').all()
+    qs = (
+        Evaluacion.objects
+        .select_related(
+            'ciudadano__tipo_identificacion',
+            'categoria__tipificacion__segmento',
+            'categoria__categoria_padre',
+            'user'
+        )
+        .order_by('-fecha')
+    )
 
     if fecha_inicio and fecha_fin:
         try:
-            fi = make_aware(datetime.strptime(fecha_inicio, '%Y-%m-%d'))
-            ff = make_aware(datetime.strptime(fecha_fin, '%Y-%m-%d'))
-            reportes = reportes.filter(fecha_registro__range=[fi, ff])
+            fmt = '%Y-%m-%d'
+            fi = make_aware(datetime.strptime(fecha_inicio, fmt))
+            ff = make_aware(datetime.strptime(fecha_fin,    fmt))
+            qs = qs.filter(fecha__range=(fi, ff))
         except ValueError:
-            pass  
+            pass
 
-    response = HttpResponse(content_type='text/csv')
-    response['Content-Disposition'] = 'attachment; filename="reporte_tipificaciones.csv"'
+    paginator = Paginator(qs, 10)
+    page_obj  = paginator.get_page(request.GET.get('page') or 1)
 
-    writer = csv.writer(response)
-    writer.writerow(['Fecha Registro', 'Ciudadano', 'Documento', 'ID Conversación', 'Opción', 'Valor', 'Observaciones'])
+    return render(request, 'usuarios/reportes.html', {
+        'reportes':     page_obj,
+        'paginator':    paginator,
+        'page_obj':     page_obj,
+        'is_paginated': page_obj.has_other_pages(),
+        'hoy':          date.today().isoformat(),
+    })
 
-    for r in reportes:
-        writer.writerow([
-            r.fecha_registro.strftime('%Y-%m-%d %H:%M'),
-            r.evaluacion.ciudadano.nombre,
-            r.evaluacion.ciudadano.numero_identificacion,
-            r.evaluacion.id_conversacion,
-            r.opcion.texto if r.opcion else '',
-            r.valor,
-            r.observaciones
-        ])
 
-    return response
+@require_GET
+@login_required
+@en_grupo([Roles.ADMINISTRADOR.value, Roles.SUPERVISOR.value])
+def exportar_excel(request):
+    fecha_inicio = request.GET.get('fecha_inicio')
+    fecha_fin    = request.GET.get('fecha_fin')
+
+    qs = (
+        Evaluacion.objects
+        .select_related(
+            'ciudadano__tipo_identificacion',
+            'categoria__tipificacion__segmento',
+            'categoria__categoria_padre',
+            'user'
+        )
+        .order_by('-fecha')
+    )
+
+    if fecha_inicio and fecha_fin:
+        try:
+            fmt = '%Y-%m-%d'
+            fi = make_aware(datetime.strptime(fecha_inicio, fmt))
+            ff = make_aware(datetime.strptime(fecha_fin,    fmt))
+            qs = qs.filter(fecha__range=(fi, ff))
+        except ValueError:
+            pass
+
+    # Crear libro y hoja
+    wb = openpyxl.Workbook()
+    ws = wb.active
+    ws.title = "Reportes"
+
+    # Encabezados
+    headers = [
+        'Fecha', 'Tipo Documento', 'Número ID', 'Nombre',
+        'ID Conversación', 'Segmento','Tipificación','Categoría','Categoría Padre',
+        'Observación','Usuario'
+    ]
+    for col, header in enumerate(headers, 1):
+        ws.cell(row=1, column=col, value=header)
+
+    # Filas de datos
+    for row_idx, ev in enumerate(qs.iterator(), start=2):
+        ciu = ev.ciudadano
+        cat = ev.categoria
+        data = [
+            localtime(ev.fecha).strftime('%Y-%m-%d %H:%M'),
+            ciu.tipo_identificacion.nombre,
+            ciu.numero_identificacion,
+            ciu.nombre,
+            ev.conversacion_id,
+            cat.tipificacion.segmento.nombre if cat.tipificacion and cat.tipificacion.segmento else '',
+            cat.tipificacion.nombre if cat.tipificacion else '',
+            cat.nombre,
+            cat.categoria_padre.nombre if cat.categoria_padre else '',
+            ev.observacion,
+            ev.user.username,
+        ]
+        for col, value in enumerate(data, 1):
+            ws.cell(row=row_idx, column=col, value=value)
+
+    # Ajustar ancho de columnas
+    for i, _ in enumerate(headers, 1):
+        ws.column_dimensions[get_column_letter(i)].auto_size = True
+
+    # Guardar en un buffer
+    buffer = BytesIO()
+    wb.save(buffer)
+    buffer.seek(0)
+
+    # Respuesta HTTP
+    resp = HttpResponse(
+        buffer,
+        content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+    )
+    resp['Content-Disposition'] = 'attachment; filename="reportes_tipificaciones.xlsx"'
+    return resp
