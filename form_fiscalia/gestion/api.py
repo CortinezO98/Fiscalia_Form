@@ -3,17 +3,23 @@ from .models import *
 
 def ciudadano(request):
     numero_identificacion = request.GET.get('numero_identificacion')
-    if numero_identificacion:
-        try:
-            ciudadano = Ciudadano.objects.get(numero_identificacion=numero_identificacion)
-            return JsonResponse({
-                'id': ciudadano.id,
-                'nombre': ciudadano.nombre,
-                'tipo_identificacion_id': ciudadano.tipo_identificacion.id,
-            })
-        except Ciudadano.DoesNotExist:
-            return JsonResponse({}, status=404)
-    return JsonResponse({'error': 'Número no enviado'}, status=400)
+    if not numero_identificacion:
+        return JsonResponse({'error': 'Número no enviado'}, status=400)
+
+    try:
+        ciu = Ciudadano.objects.get(numero_identificacion=numero_identificacion)
+        return JsonResponse({
+            'id': ciu.id,
+            'nombre': ciu.nombre,
+            'tipo_identificacion_id': ciu.tipo_identificacion_id,
+            'correo': ciu.correo,
+            'telefono': ciu.telefono,
+            'direccion_residencia': ciu.direccion_residencia,
+            'pais_id': ciu.pais_id,
+            'ciudad': ciu.ciudad,
+        })
+    except Ciudadano.DoesNotExist:
+        return JsonResponse({}, status=404)
 
 def tipificaciones(request):
     segmento_id = request.GET.get('segmento_id')

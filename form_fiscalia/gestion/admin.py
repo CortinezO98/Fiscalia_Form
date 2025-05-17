@@ -6,12 +6,17 @@ class TipoIdentificacionAdmin(admin.ModelAdmin):
     list_display = ('nombre',)
     search_fields = ('nombre',)
 
+@admin.register(Pais)
+class PaisAdmin(admin.ModelAdmin):
+    list_display = ('nombre',)
+    search_fields = ('nombre',)
+
 
 @admin.register(Ciudadano)
 class CiudadanoAdmin(admin.ModelAdmin):
-    list_display = ('nombre', 'tipo_identificacion', 'numero_identificacion')
-    search_fields = ('nombre', 'numero_identificacion')
-    list_filter = ('tipo_identificacion',)
+    list_display = ('nombre','tipo_identificacion','numero_identificacion','correo','telefono','pais','ciudad',)
+    search_fields = ('nombre','numero_identificacion','correo','telefono',)
+    list_filter = ('tipo_identificacion','pais',)
 
 
 @admin.register(Segmento)

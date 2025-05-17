@@ -14,9 +14,7 @@ from io import BytesIO
 from datetime import date, datetime
 import openpyxl
 from openpyxl.utils import get_column_letter
-
-
-
+import inspect
 
 def index(request):
     if request.user.is_authenticated:
@@ -39,41 +37,58 @@ def crear_evaluacion(request):
     if request.method == 'POST':
         try:
             with transaction.atomic():
-                ciudadano = None
-                if request.POST.get('cuidadano_id'):
-                    ciudadano = Ciudadano.objects.filter(id=request.POST.get('cuidadano_id')).first()
-                if not ciudadano:
+                cid = request.POST.get('cuidadano_id')
+                if cid:
+                    ciudadano = Ciudadano.objects.get(id=cid)
+                    # Actualizar campos
+                    ciudadano.tipo_identificacion_id = request.POST['tipo_identificacion']
+                    ciudadano.numero_identificacion = request.POST['numero_identificacion']
+                    ciudadano.nombre = request.POST['nombre']
+                    ciudadano.correo = request.POST.get('correo', '')
+                    ciudadano.telefono = request.POST.get('telefono', '')
+                    ciudadano.direccion_residencia = request.POST.get('direccion_residencia', '')
+                    ciudadano.pais_id = request.POST.get('pais') or None
+                    ciudadano.ciudad = request.POST.get('ciudad', '')
+                    ciudadano.save()
+                else:
                     ciudadano = Ciudadano.objects.create(
-                        tipo_identificacion_id=request.POST.get('tipo_identificacion'),
-                        numero_identificacion=request.POST.get('numero_identificacion'),
-                        nombre=request.POST.get('nombre')
+                        tipo_identificacion_id=request.POST['tipo_identificacion'],
+                        numero_identificacion=request.POST['numero_identificacion'],
+                        nombre=request.POST['nombre'],
+                        correo=request.POST.get('correo', ''),
+                        telefono=request.POST.get('telefono', ''),
+                        direccion_residencia=request.POST.get('direccion_residencia', ''),
+                        pais_id=request.POST.get('pais') or None,
+                        ciudad=request.POST.get('ciudad', '')
                     )
 
-                evaluacion = Evaluacion.objects.create(
-                    conversacion_id = request.POST.get('conversacion_id'),
-                    observacion = request.POST.get('observacion'),
-                    ciudadano = ciudadano,
-                    categoria_id = request.POST.get('subcategoria') if request.POST.get('subcategoria') else request.POST.get('categoria'),
-                    user = request.user
+                Evaluacion.objects.create(
+                    conversacion_id=request.POST['conversacion_id'],
+                    observacion=request.POST['observacion'],
+                    ciudadano=ciudadano,
+                    categoria_id=request.POST.get('subcategoria') or request.POST['categoria'],
+                    user=request.user
                 )
+
                 messages.success(request, "Evaluación guardada correctamente.")
         except Exception as e:
+            RegistrarError(inspect.currentframe().f_code.co_name, str(e), request)
             messages.error(request, "Ocurrió un error al guardar la evaluación.")
         return redirect('index')
-    
+
     tiposIdentificacion = TipoIdentificacion.objects.all()
     segmentos = Segmento.objects.all()
+    paises = Pais.objects.all()
 
     if not tiposIdentificacion or not segmentos:
         messages.warning(request, "En este momento no es posible generar una tipificación. Por favor, contacte a soporte.")
         return redirect('index')
 
-    context = {
-        "tiposIdentificacion": tiposIdentificacion,
-        "segmentos": segmentos,
-    }
-
-    return render(request, 'usuarios/evaluaciones/crear_evaluacion.html', context)
+    return render(request, 'usuarios/evaluaciones/crear_evaluacion.html', {
+        'tiposIdentificacion': tiposIdentificacion,
+        'segmentos': segmentos,
+        'paises': paises,
+    })
 
 
 @login_required

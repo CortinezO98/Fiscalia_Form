@@ -50,6 +50,51 @@
                                 <div class="invalid-feedback">Ingrese un ID de conversación válido (mín. 5 caracteres)</div>
                             </div>
 
+                            <!-- Correo -->
+                            <div class="col-md-6">
+                                <label for="correo" class="form-label">
+                                    <i class="bi bi-envelope me-1"></i>Correo electrónico
+                                </label>
+                                <input type="email" name="correo" id="correo" class="form-control" maxlength="254">
+                            </div>
+
+                            <!-- Teléfono -->
+                            <div class="col-md-6">
+                                <label for="telefono" class="form-label">
+                                    <i class="bi bi-telephone me-1"></i>Teléfono
+                                </label>
+                                <input type="text" name="telefono" id="telefono" class="form-control" maxlength="20">
+                            </div>
+
+                            <!-- Dirección -->
+                            <div class="col-md-6">
+                                <label for="direccion_residencia" class="form-label">
+                                    <i class="bi bi-geo-alt me-1"></i>Dirección de residencia
+                                </label>
+                                <input type="text" name="direccion_residencia" id="direccion_residencia" class="form-control" maxlength="255">
+                            </div>
+
+                            <!-- País -->
+                            <div class="col-md-6">
+                                <label for="pais" class="form-label">
+                                    <i class="bi bi-globe me-1"></i>País
+                                </label>
+                                <select name="pais" id="pais" class="form-select">
+                                    <option value="" disabled selected>Seleccionar país...</option>
+                                    {% for p in paises %}
+                                        <option value="{{ p.id }}">{{ p.nombre }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+
+                            <!-- Ciudad -->
+                            <div class="col-md-6">
+                                <label for="ciudad" class="form-label">
+                                    <i class="bi bi-building me-1"></i>Ciudad
+                                </label>
+                                <input type="text" name="ciudad" id="ciudad" class="form-control" maxlength="100">
+                            </div>
+
                             <input type="text" name="cuidadano_id" id="cuidadano_id" value="" hidden>
                         </div>
                     </div>
