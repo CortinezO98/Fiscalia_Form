@@ -174,28 +174,31 @@
 <script>
     $(document).ready(function() {
         $('#numero_identificacion').on('blur', function() {
-            const numeroIdentificacion = $(this).val().trim();
-
-            if (numeroIdentificacion.length === 0) return;
+            const numero = $(this).val().trim();
+            if (!numero) return;
 
             $.ajax({
                 url: '/api/ciudadano/',
                 method: 'GET',
-                data: {
-                    numero_identificacion: numeroIdentificacion
-                },
+                data: { numero_identificacion: numero },
                 success: function(response) {
-                    console.log("response", response)
                     if (response && response.id) {
                         $('#tipo_identificacion').val(response.tipo_identificacion_id);
                         $('#nombre').val(response.nombre);
+                        $('#correo').val(response.correo || '');
+                        $('#telefono').val(response.telefono || '');
+                        $('#direccion_residencia').val(response.direccion_residencia || '');
+                        $('#pais').val(response.pais_id || '');
+                        $('#ciudad').val(response.ciudad || '');
                         $('#cuidadano_id').val(response.id);
+                    } else {
+                        $('#tipo_identificacion, #nombre, #correo, #telefono, #direccion_residencia, #pais, #ciudad, #cuidadano_id')
+                            .val('');
                     }
                 },
-                error: function(xhr) {
-                    $('#tipo_identificacion').val('');
-                    $('#cuidadano_id').val('');
-                    $('#nombre').val('');
+                error: function() {
+                    $('#tipo_identificacion, #nombre, #correo, #telefono, #direccion_residencia, #pais, #ciudad, #cuidadano_id')
+                        .val('');
                 }
             });
         });
