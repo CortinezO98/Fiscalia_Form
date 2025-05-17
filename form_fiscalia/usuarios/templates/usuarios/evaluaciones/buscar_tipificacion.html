@@ -60,17 +60,27 @@
                     <td>{{ ev.observacion|truncatechars:50 }}</td>
                     <td>{{ ev.user.username }}</td>
                     <td>
-                        <button type="button" class="btn btn-sm btn-outline-primary" data-bs-toggle="modal"
-                            data-bs-target="#detalleModal" data-fecha="{{ ev.fecha|date:'d/m/Y H:i' }}"
-                            data-tipo="{{ ev.ciudadano.tipo_identificacion.nombre }}"
-                            data-documento="{{ ev.ciudadano.numero_identificacion }}"
-                            data-nombre="{{ ev.ciudadano.nombre }}" data-conversacion="{{ ev.conversacion_id }}"
-                            data-segmento="{{ ev.categoria.tipificacion.segmento.nombre }}"
-                            data-tipificacion="{{ ev.categoria.tipificacion.nombre }}"
-                            data-categoria="{{ ev.categoria.nombre }}" data-observacion="{{ ev.observacion|escape }}"
-                            data-usuario="{{ ev.user.username }}">
+                        <button type="button" class="btn btn-sm btn-outline-primary"
+                                data-bs-toggle="modal" data-bs-target="#detalleModal"
+                                data-fecha="{{ ev.fecha|date:'d/m/Y H:i' }}"
+                                data-tipo="{{ ev.ciudadano.tipo_identificacion.nombre }}"
+                                data-documento="{{ ev.ciudadano.numero_identificacion }}"
+                                data-nombre="{{ ev.ciudadano.nombre }}"
+                                data-conversacion_id="{{ ev.conversacion_id }}"
+                                data-segmento="{{ ev.categoria.tipificacion.segmento.nombre }}"
+                                data-tipificacion="{{ ev.categoria.tipificacion.nombre }}"
+                                data-categoria="{{ ev.categoria.nombre }}"
+                                data-observacion="{{ ev.observacion|escape }}"
+                                data-usuario="{{ ev.user.username }}"
+                                data-correo="{% if ev.ciudadano.correo %}{{ ev.ciudadano.correo }}{% endif %}"
+                                data-telefono="{% if ev.ciudadano.telefono %}{{ ev.ciudadano.telefono }}{% endif %}"
+                                data-direccion="{% if ev.ciudadano.direccion_residencia %}{{ ev.ciudadano.direccion_residencia }}{% endif %}"
+                                data-pais="{% if ev.ciudadano.pais %}{{ ev.ciudadano.pais.nombre }}{% endif %}"
+                                data-ciudad="{% if ev.ciudadano.ciudad %}{{ ev.ciudadano.ciudad }}{% endif %}"
+                        >
                             Ver detalles
                         </button>
+
                     </td>
                 </tr>
                 {% endfor %}
@@ -139,83 +149,132 @@
 
 
 <div class="modal fade" id="detalleModal" tabindex="-1" aria-labelledby="detalleModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg modal-dialog-centered">
+    <div class="modal-dialog modal-xl modal-dialog-centered">
         <div class="modal-content">
-            <!-- Encabezado con icono y título destacado -->
             <div class="modal-header bg-light border-bottom-0 pb-3">
-                <div class="d-flex align-items-center">
-                    <i class="fas fa-clipboard-check fa-lg text-primary me-3"></i>
-                    <h3 class="modal-title fs-5 fw-bold text-dark mb-0">Detalles de Evaluación</h3>
+                <div class="d-flex align-items-center gap-3">
+                    <div class="bg-primary bg-opacity-10 p-3 rounded-3">
+                        <i class="fas fa-clipboard-check fa-lg text-primary"></i>
+                    </div>
+                    <div>
+                        <h3 class="modal-title h4 fw-bold text-dark mb-0" id="detalleModalLabel">Detalles de Evaluación</h3>
+                    </div>
                 </div>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
             </div>
 
-            <!-- Cuerpo principal del modal -->
+            <!-- Cuerpo -->
             <div class="modal-body pt-0">
                 <div class="row g-4">
-                    <!-- Sección de información principal -->
+                    
+                    <!-- Sección Principal -->
                     <div class="col-12">
                         <div class="card border-light shadow-sm">
                             <div class="card-body">
-                                <dl class="row mb-0">
-                                    <!-- Items de datos principales -->
-                                    <div class="col-md-6 mb-3">
-                                        <dt class="small text-muted text-uppercase mb-1">Fecha</dt>
-                                        <dd class="mb-0 fw-medium" id="md-fecha"></dd>
+                                <h5 class="fw-bold text-muted mb-4">Datos del Ciudadano</h5>
+                                <div class="row g-4">
+                                    
+                                    <!-- Grupo 1: Información Básica -->
+                                    <div class="col-md-4 border-end">
+                                        <dl>
+                                            <dt class="text-muted small text-uppercase mb-2">Información Básica</dt>
+                                            <dd class="mb-3">
+                                                <div class="small text-muted">Fecha</div>
+                                                <div class="fw-medium" id="md-fecha"></div>
+                                            </dd>
+                                            <dd class="mb-3">
+                                                <div class="small text-muted">Tipo de Documento</div>
+                                                <div class="fw-medium" id="md-tipo"></div>
+                                            </dd>
+                                            <dd class="mb-3">
+                                                <div class="small text-muted">Número de Documento</div>
+                                                <div class="fw-medium" id="md-documento"></div>
+                                            </dd>
+                                        </dl>
                                     </div>
-                                    <div class="col-md-6 mb-3">
-                                        <dt class="small text-muted text-uppercase mb-1">Tipo Documento</dt>
-                                        <dd class="mb-0 fw-medium" id="md-tipo"></dd>
+
+                                    <!-- Grupo 2: Datos Personales -->
+                                    <div class="col-md-4 border-end">
+                                        <dl>
+                                            <dt class="text-muted small text-uppercase mb-2">Datos Personales</dt>
+                                            <dd class="mb-3">
+                                                <div class="small text-muted">Nombre completo</div>
+                                                <div class="fw-medium" id="md-nombre"></div>
+                                            </dd>
+                                            <dd class="mb-3">
+                                                <div class="small text-muted">Correo electrónico</div>
+                                                <div class="fw-medium" id="md-correo"></div>
+                                            </dd>
+                                            <dd class="mb-0">
+                                                <div class="small text-muted">Teléfono celular</div>
+                                                <div class="fw-medium" id="md-telefono"></div>
+                                            </dd>
+                                        </dl>
                                     </div>
-                                    <div class="col-md-6 mb-3">
-                                        <dt class="small text-muted text-uppercase mb-1">Documento</dt>
-                                        <dd class="mb-0 fw-medium" id="md-documento"></dd>
+
+                                    <!-- Grupo 3: Ubicación -->
+                                    <div class="col-md-4">
+                                        <dl>
+                                            <dt class="text-muted small text-uppercase mb-2">Ubicación</dt>
+                                            <dd class="mb-3">
+                                                <div class="small text-muted">País</div>
+                                                <div class="fw-medium" id="md-pais"></div>
+                                            </dd>
+                                            <dd class="mb-3">
+                                                <div class="small text-muted">Ciudad</div>
+                                                <div class="fw-medium" id="md-ciudad"></div>
+                                            </dd>
+                                            <dd class="mb-0">
+                                                <div class="small text-muted">Dirección</div>
+                                                <div class="fw-medium" id="md-direccion"></div>
+                                            </dd>
+                                        </dl>
                                     </div>
-                                    <div class="col-md-6 mb-3">
-                                        <dt class="small text-muted text-uppercase mb-1">Nombre</dt>
-                                        <dd class="mb-0 fw-medium" id="md-nombre"></dd>
+
+                                    <!-- ID Conversación -->
+                                    <div class="col-12 border-top pt-4">
+                                        <div class="small text-muted text-uppercase">ID de Conversación</div>
+                                        <div class="fw-medium text-primary" id="md-conversacion_id"></div>
                                     </div>
-                                    <div class="col-12 mb-3">
-                                        <dt class="small text-muted text-uppercase mb-1">ID Conversación</dt>
-                                        <dd class="mb-0 fw-medium text-primary" id="md-conversacion"></dd>
-                                    </div>
-                                </dl>
+                                </div>
                             </div>
                         </div>
                     </div>
 
-                    <!-- Sección de clasificación -->
-                    <div class="col-md-4">
+                    <!-- Sección Secundaria -->
+                    <div class="col-lg-4">
                         <div class="card border-light shadow-sm h-100">
                             <div class="card-body">
-                                <h6 class="fw-bold mb-3 text-muted">Clasificación</h6>
-                                <dl class="row mb-0">
-                                    <div class="col-12 mb-3">
-                                        <dt class="small text-muted text-uppercase mb-1">Segmento</dt>
-                                        <dd class="mb-0 fw-medium" id="md-segmento"></dd>
-                                    </div>
-                                    <div class="col-12 mb-3">
-                                        <dt class="small text-muted text-uppercase mb-1">Tipificación</dt>
-                                        <dd class="mb-0 fw-medium" id="md-tipificacion"></dd>
-                                    </div>
-                                    <div class="col-12 mb-3">
-                                        <dt class="small text-muted text-uppercase mb-1">Categoría</dt>
-                                        <dd class="mb-0 fw-medium" id="md-categoria"></dd>
-                                    </div>
-                                </dl>
+                                <h5 class="fw-bold text-muted mb-4">Clasificación</h5>
+                                <ul class="list-unstyled mb-0">
+                                    <li class="mb-3">
+                                        <div class="small text-muted text-uppercase">Segmento</div>
+                                        <div class="fw-medium" id="md-segmento"></div>
+                                    </li>
+                                    <li class="mb-3">
+                                        <div class="small text-muted text-uppercase">Tipificación</div>
+                                        <div class="fw-medium" id="md-tipificacion"></div>
+                                    </li>
+                                    <li class="mb-0">
+                                        <div class="small text-muted text-uppercase">Categoría</div>
+                                        <div class="fw-medium" id="md-categoria"></div>
+                                    </li>
+                                </ul>
                             </div>
                         </div>
                     </div>
 
-                    <!-- Sección de observaciones destacada -->
-                    <div class="col-md-8">
+                    <!-- Observaciones -->
+                    <div class="col-lg-8">
                         <div class="card border-light shadow-sm h-100">
-                            <div class="card-body d-flex flex-column">
+                            <div class="card-body">
                                 <div class="d-flex justify-content-between align-items-center mb-3">
-                                    <h6 class="fw-bold text-muted mb-0">Observaciones</h6>
-                                    <span class="badge bg-primary bg-opacity-10 text-primary small">Texto completo</span>
+                                    <h5 class="fw-bold text-muted mb-0">Observaciones</h5>
+                                    <span class="badge bg-primary bg-opacity-10 text-primary small">
+                                        <i class="fas fa-expand-alt me-2"></i>Texto completo
+                                    </span>
                                 </div>
-                                <div class="observation-scroll flex-grow-1">
+                                <div class="observation-scroll" style="max-height: 200px; overflow-y: auto;">
                                     <p class="text-muted mb-0 pre-line" id="md-observacion"></p>
                                 </div>
                             </div>
@@ -224,8 +283,8 @@
                 </div>
             </div>
 
-            <!-- Pie del modal -->
-            <div class="modal-footer border-top-0 bg-light pt-3">
+            <!-- Pie -->
+            <div class="modal-footer bg-light border-top-0 pt-3">
                 <button type="button" class="btn btn-primary px-4" data-bs-dismiss="modal">
                     <i class="fas fa-times me-2"></i>Cerrar
                 </button>
@@ -233,6 +292,62 @@
         </div>
     </div>
 </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    var detalleModal = document.getElementById('detalleModal');
+    detalleModal.addEventListener('show.bs.modal', function (event) {
+        var btn = event.relatedTarget;
+        var campos = [
+            'fecha', 'tipo', 'documento', 'nombre',
+            'correo', 'telefono', 'pais', 'ciudad', 
+            'direccion', 'conversacion_id', 'usuario',
+            'segmento', 'tipificacion', 'categoria', 'observacion'
+        ];
+        
+        campos.forEach(function (field) {
+            var element = document.getElementById('md-' + field);
+            if(element) {
+                var valor = btn.getAttribute('data-' + field) || 'N/A';
+                element.textContent = valor;
+            }
+        });
+    });
+});
+</script>
+
+<style>
+    .observation-scroll {
+        overflow-y: auto;
+        max-height: 300px;
+        padding-right: 10px;
+        border-radius: 8px;
+        scrollbar-width: thin;
+        scrollbar-color: #d1d5db transparent;
+    }
+
+    .observation-scroll::-webkit-scrollbar {
+        width: 8px;
+    }
+
+    .observation-scroll::-webkit-scrollbar-thumb {
+        background-color: #d1d5db;
+        border-radius: 4px;
+    }
+
+    .observation-scroll::-webkit-scrollbar-track {
+        background: transparent;
+    }
+
+    .pre-line {
+        white-space: pre-line;
+        line-height: 1.6;
+    }
+
+    .card {
+        border-radius: 12px;
+    }
+</style>
 
 <style>
     .observation-scroll {
@@ -270,21 +385,6 @@
         border-radius: 12px;
     }
 </style>
-
-<script>
-    document.addEventListener('DOMContentLoaded', function () {
-        var detalleModal = document.getElementById('detalleModal');
-        detalleModal.addEventListener('show.bs.modal', function (event) {
-            var btn = event.relatedTarget;
-            // Leer atributos data-*
-            var campos = ['fecha', 'tipo', 'documento', 'nombre', 'conversacion', 'segmento', 'tipificacion', 'categoria', 'observacion', 'usuario'];
-            campos.forEach(function (field) {
-                var valor = btn.getAttribute('data-' + field);
-                document.getElementById('md-' + field).textContent = valor;
-            });
-        });
-    });
-</script>
 
 
 {% endblock %}

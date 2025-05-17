@@ -77,15 +77,24 @@
         </table>
     </div>
 
-    {% if is_paginated %}
+{% if is_paginated %}
     <nav class="mt-4">
         <ul class="pagination justify-content-center">
-            <li class="page-item {% if not page_obj.has_previous %}disabled{% endif %}">
+            {# Botón «Anterior» #}
+            {% if page_obj.has_previous %}
+            <li class="page-item">
                 <a class="page-link"
                     href="?page={{ page_obj.previous_page_number }}&fecha_inicio={{ request.GET.fecha_inicio }}&fecha_fin={{ request.GET.fecha_fin }}">
                     &laquo;
                 </a>
             </li>
+            {% else %}
+            <li class="page-item disabled">
+                <span class="page-link">&laquo;</span>
+            </li>
+            {% endif %}
+    
+            {# Números de página #}
             {% for num in paginator.page_range %}
             <li class="page-item {% if page_obj.number == num %}active{% endif %}">
                 <a class="page-link"
@@ -94,12 +103,20 @@
                 </a>
             </li>
             {% endfor %}
-            <li class="page-item {% if not page_obj.has_next %}disabled{% endif %}">
+    
+            {# Botón «Siguiente» #}
+            {% if page_obj.has_next %}
+            <li class="page-item">
                 <a class="page-link"
                     href="?page={{ page_obj.next_page_number }}&fecha_inicio={{ request.GET.fecha_inicio }}&fecha_fin={{ request.GET.fecha_fin }}">
                     &raquo;
                 </a>
             </li>
+            {% else %}
+            <li class="page-item disabled">
+                <span class="page-link">&raquo;</span>
+            </li>
+            {% endif %}
         </ul>
     </nav>
     {% endif %}

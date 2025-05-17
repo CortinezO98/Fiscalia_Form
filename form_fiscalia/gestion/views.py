@@ -106,6 +106,7 @@ def buscar_tipificacion(request):
             Evaluacion.objects
             .select_related(
                 'ciudadano__tipo_identificacion',
+                'ciudadano__pais',
                 'categoria__tipificacion__segmento',
                 'categoria__categoria_padre',
                 'user'
