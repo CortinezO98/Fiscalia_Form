@@ -142,6 +142,7 @@ def reportes_view(request):
         Evaluacion.objects
         .select_related(
             'ciudadano__tipo_identificacion',
+            'ciudadano__pais',
             'categoria__tipificacion__segmento',
             'categoria__categoria_padre',
             'user'
@@ -181,6 +182,7 @@ def exportar_excel(request):
         Evaluacion.objects
         .select_related(
             'ciudadano__tipo_identificacion',
+            'ciudadano__pais',
             'categoria__tipificacion__segmento',
             'categoria__categoria_padre',
             'user'
@@ -203,8 +205,9 @@ def exportar_excel(request):
     ws.title = "Reportes"
     headers = [
         'Fecha', 'Tipo Documento', 'Número ID', 'Nombre',
-        'ID Conversación', 'Segmento','Tipificación','Categoría','Categoría Padre',
-        'Observación','Usuario'
+        'Correo', 'Teléfono', 'País', 'Ciudad', 'Dirección',     
+        'ID Conversación', 'Segmento','Tipificación',
+        'Categoría','Categoría Padre','Observación','Usuario'
     ]
     for col, header in enumerate(headers, 1):
         ws.cell(row=1, column=col, value=header)
@@ -217,6 +220,11 @@ def exportar_excel(request):
             ciu.tipo_identificacion.nombre,
             ciu.numero_identificacion,
             ciu.nombre,
+            ciu.correo or '',
+            ciu.telefono or '',
+            ciu.pais.nombre if ciu.pais else '',
+            ciu.ciudad or '',
+            ciu.direccion_residencia or '',
             ev.conversacion_id,
             cat.tipificacion.segmento.nombre if cat.tipificacion and cat.tipificacion.segmento else '',
             cat.tipificacion.nombre if cat.tipificacion else '',
