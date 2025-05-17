@@ -13,10 +13,28 @@ class TipoIdentificacion(models.Model):
     def __str__(self):
         return f"{self.nombre}"
 
+
+class Pais(models.Model):
+    nombre = models.CharField(max_length=100, unique=True)
+
+    class Meta:
+        verbose_name = "País"
+        verbose_name_plural = "Países"
+        ordering = ['nombre']
+
+    def __str__(self):
+        return self.nombre
+
+
 class Ciudadano(models.Model):
     tipo_identificacion = models.ForeignKey(TipoIdentificacion, on_delete=models.CASCADE)
     numero_identificacion = models.CharField(max_length=20, unique=True)
     nombre = models.CharField(max_length=255)
+    correo  = models.EmailField("Correo electrónico", max_length=254, blank=True)
+    telefono = models.CharField("Teléfono", max_length=20, blank=True)
+    direccion_residencia = models.CharField("Dirección de residencia", max_length=255, blank=True)
+    pais  = models.ForeignKey(Pais, on_delete=models.PROTECT, null=True, blank=True)
+    ciudad = models.CharField(max_length=100, null=True, blank=True)
 
     class Meta:
         verbose_name = "Ciudadano"
