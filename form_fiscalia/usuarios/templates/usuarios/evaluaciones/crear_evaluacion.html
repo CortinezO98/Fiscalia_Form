@@ -173,17 +173,10 @@
 
 <script>
     $(document).ready(function() {
-<<<<<<< Updated upstream
         $('#numero_identificacion').on('blur', function() {
             const numero = $(this).val().trim();
             if (!numero) return;
 
-=======
-    $('#numero_identificacion')
-        .on('change', function() {
-            const numero = $(this).val().trim();
-            if (!numero) return;
->>>>>>> Stashed changes
             $.ajax({
                 url: '/api/ciudadano/',
                 method: 'GET',
