@@ -173,10 +173,12 @@
 
 <script>
     $(document).ready(function() {
-        $('#numero_identificacion').on('blur', function() {
+        $('#numero_identificacion').on('change', function() {
             const numero = $(this).val().trim();
-            if (!numero) return;
-
+            if (!numero) {
+                $('#cuidadano_id').val('');
+                return;
+            }
             $.ajax({
                 url: '/api/ciudadano/',
                 method: 'GET',
@@ -192,13 +194,11 @@
                         $('#ciudad').val(response.ciudad || '');
                         $('#cuidadano_id').val(response.id);
                     } else {
-                        $('#tipo_identificacion, #nombre, #correo, #telefono, #direccion_residencia, #pais, #ciudad, #cuidadano_id')
-                            .val('');
+                        $('#cuidadano_id').val('');
                     }
                 },
                 error: function() {
-                    $('#tipo_identificacion, #nombre, #correo, #telefono, #direccion_residencia, #pais, #ciudad, #cuidadano_id')
-                        .val('');
+                    $('#cuidadano_id').val('');
                 }
             });
         });
