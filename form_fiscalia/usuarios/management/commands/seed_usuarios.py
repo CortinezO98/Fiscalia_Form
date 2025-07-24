@@ -20,7 +20,7 @@ class Command(BaseCommand):
             self.stderr.write(self.style.ERROR(f"❌ Error, se hizo rollback: {e}"))
 
     def create_roles(self):
-        for role in [Roles.ADMINISTRADOR, Roles.SUPERVISOR, Roles.AGENTE]:
+        for role in [Roles.ADMINISTRADOR, Roles.SUPERVISOR, Roles.AGENTE, Roles.ABOGADO]:
             Group.objects.get_or_create(
                 id=role.value,
                 defaults={'name': role.label}

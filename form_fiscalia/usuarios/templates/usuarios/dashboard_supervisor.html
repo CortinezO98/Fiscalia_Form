@@ -148,50 +148,47 @@
     </div>
 
     <!-- Actividad Reciente -->
-    <div class="row mt-4">
-        <div class="col-12">
-            <div class="card shadow-lg border-0 rounded-3">
-                <div class="card-body p-4">
-                    <h5 class="fw-semibold mb-4">
-                        <i class="bi bi-clock-history me-2"></i>Actividad Reciente
-                    </h5>
-                    <div class="table-responsive">
-                        <table class="table table-hover align-middle">
-                            <thead class="table-light">
-                                <tr>
-                                    <th>Usuario</th>
-                                    <th>Documento</th>
-                                    <th>Tipificación</th>
-                                    <th class="text-truncate">Observación</th>
-                                    <th>Hora</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {% for ev in actividad_reciente %}
-                                    <tr>
-                                        <td class="fw-semibold">
-                                            {{ ev.user.get_full_name|default:ev.user.username }}
-                                        </td>
-                                        <td>{{ ev.ciudadano.numero_identificacion }}</td>
-                                        <td>{{ ev.categoria.tipificacion.nombre }}</td>
-                                        <td class="text-truncate" style="max-width:200px;">
-                                            {{ ev.observacion|truncatechars:40 }}
-                                        </td>
-                                        <td>{{ ev.fecha|timesince }} atrás</td>
-                                    </tr>
-                                {% empty %}
-                                    <tr>
-                                        <td colspan="5" class="text-center text-muted py-4">
-                                            No hay actividad reciente
-                                        </td>
-                                    </tr>
-                                {% endfor %}
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-        </div>
+    <div class="table-responsive">
+        <table class="table table-hover align-middle">
+            <thead class="table-light">
+                <tr>
+                    <th>Usuario</th>
+                    <th>Documento</th>
+                    <th>Tipificación</th>
+                    <th class="text-truncate">Observación</th>
+                    <th>Hora</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for ev in actividad_reciente %}
+                    <tr>
+                        <td class="fw-semibold">
+                            {{ ev.user.get_full_name|default:ev.user.username }}
+                        </td>
+                        <td>{{ ev.ciudadano.numero_identificacion }}</td>
+                        <td>
+                            {% if ev.categoria.tipificacion %}
+                                {{ ev.categoria.tipificacion.nombre }}
+                            {% elif ev.categoria.categoria_padre and ev.categoria.categoria_padre.tipificacion %}
+                                {{ ev.categoria.categoria_padre.tipificacion.nombre }}
+                            {% else %}
+                                <span class="text-muted">Sin tipificación</span>
+                            {% endif %}
+                        </td>
+                        <td class="text-truncate" style="max-width:200px;">
+                            {{ ev.observacion|truncatechars:40 }}
+                        </td>
+                        <td>{{ ev.fecha|timesince }} atrás</td>
+                    </tr>
+                {% empty %}
+                    <tr>
+                        <td colspan="5" class="text-center text-muted py-4">
+                            No hay actividad reciente
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
     </div>
 </div>
 

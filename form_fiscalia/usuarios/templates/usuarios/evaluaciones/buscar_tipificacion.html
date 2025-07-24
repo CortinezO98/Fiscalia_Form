@@ -38,12 +38,13 @@
                     <th>Documento</th>
                     <th>Nombre</th>
                     <th>ID Convers.</th>
+                    <th>Tipo Canal</th>
                     <th>Segmento</th>
                     <th>Tipificación</th>
                     <th>Categoría</th>
                     <th>Observación</th>
                     <th>Usuario</th>
-                    <th>Acción</th> {# Columna para el botón #}
+                    <th>Acción</th>
                 </tr>
             </thead>
             <tbody>
@@ -54,8 +55,27 @@
                     <td class="fw-bold">{{ ev.ciudadano.numero_identificacion }}</td>
                     <td>{{ ev.ciudadano.nombre }}</td>
                     <td><code>{{ ev.conversacion_id }}</code></td>
-                    <td>{{ ev.categoria.tipificacion.segmento.nombre }}</td>
-                    <td>{{ ev.categoria.tipificacion.nombre }}</td>
+                    <td>
+                        {% if ev.tipo_canal %}
+                            {{ ev.tipo_canal.nombre }}
+                        {% else %}
+                            <span class="text-muted">Sin tipo canal</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if ev.segmento %}
+                            {{ ev.segmento.nombre }}
+                        {% else %}
+                            <span class="text-muted">Sin segmento</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if ev.tipificacion %}
+                            {{ ev.tipificacion.nombre }}
+                        {% else %}
+                            <span class="text-muted">Sin tipificación</span>
+                        {% endif %}
+                    </td>
                     <td>{{ ev.categoria.nombre }}</td>
                     <td>{{ ev.observacion|truncatechars:50 }}</td>
                     <td>{{ ev.user.username }}</td>
@@ -67,8 +87,10 @@
                                 data-documento="{{ ev.ciudadano.numero_identificacion }}"
                                 data-nombre="{{ ev.ciudadano.nombre }}"
                                 data-conversacion_id="{{ ev.conversacion_id }}"
-                                data-segmento="{{ ev.categoria.tipificacion.segmento.nombre }}"
-                                data-tipificacion="{{ ev.categoria.tipificacion.nombre }}"
+                                data-tipocanal="{{ ev.tipo_canal.nombre|default:'Sin tipo canal' }}"
+                                data-segmento="{{ ev.segmento.nombre|default:'Sin segmento' }}"
+                                data-segmentoii="{% if ev.segmento_ii %}{{ ev.segmento_ii.nombre }}{% else %}N/A{% endif %}"
+                                data-tipificacion="{{ ev.tipificacion.nombre|default:'Sin tipificación' }}"
                                 data-categoria="{{ ev.categoria.nombre }}"
                                 data-observacion="{{ ev.observacion|escape }}"
                                 data-usuario="{{ ev.user.username }}"
@@ -77,17 +99,16 @@
                                 data-direccion="{% if ev.ciudadano.direccion_residencia %}{{ ev.ciudadano.direccion_residencia }}{% endif %}"
                                 data-pais="{% if ev.ciudadano.pais %}{{ ev.ciudadano.pais.nombre }}{% endif %}"
                                 data-ciudad="{% if ev.ciudadano.ciudad %}{{ ev.ciudadano.ciudad }}{% endif %}"
+                                data-cual_otro_delito="{% if ev.cual_otro_delito %}{{ ev.cual_otro_delito }}{% else %}N/A{% endif %}"
                         >
                             Ver detalles
                         </button>
-
                     </td>
                 </tr>
                 {% endfor %}
             </tbody>
         </table>
     </div>
-
 
     {% if is_paginated %}
     <nav class="mt-4" aria-label="Paginación">
@@ -109,29 +130,29 @@
             {% endif %}
 
             {% for num in page_obj.paginator.page_range %}
-            {% if num >= page_obj.number|add:-2 and num <= page_obj.number|add:2 %} <li
-                class="page-item {% if num == page_obj.number %}active{% endif %}">
-                <a class="page-link" href="?q={{ query }}&page={{ num }}">{{ num }}</a>
+            {% if num >= page_obj.number|add:-2 and num <= page_obj.number|add:2 %}
+                <li class="page-item {% if num == page_obj.number %}active{% endif %}">
+                    <a class="page-link" href="?q={{ query }}&page={{ num }}">{{ num }}</a>
                 </li>
-                {% endif %}
-                {% endfor %}
+            {% endif %}
+            {% endfor %}
 
-                {% if page_obj.has_next %}
-                <li class="page-item">
-                    <a class="page-link" href="?q={{ query }}&page={{ page_obj.next_page_number }}"
-                        aria-label="Siguiente">
-                        &rsaquo;
-                    </a>
-                </li>
-                <li class="page-item">
-                    <a class="page-link" href="?q={{ query }}&page={{ page_obj.paginator.num_pages }}"
-                        aria-label="Última">
-                        &raquo;&raquo;
-                    </a>
-                </li>
-                {% else %}
-                <li class="page-item disabled"><span class="page-link">&raquo;</span></li>
-                {% endif %}
+            {% if page_obj.has_next %}
+            <li class="page-item">
+                <a class="page-link" href="?q={{ query }}&page={{ page_obj.next_page_number }}"
+                    aria-label="Siguiente">
+                    &rsaquo;
+                </a>
+            </li>
+            <li class="page-item">
+                <a class="page-link" href="?q={{ query }}&page={{ page_obj.paginator.num_pages }}"
+                    aria-label="Última">
+                    &raquo;&raquo;
+                </a>
+            </li>
+            {% else %}
+            <li class="page-item disabled"><span class="page-link">&raquo;</span></li>
+            {% endif %}
         </ul>
     </nav>
     {% endif %}
@@ -147,7 +168,7 @@
     {% endif %}
 </div>
 
-
+<!-- Modal de detalles actualizado -->
 <div class="modal fade" id="detalleModal" tabindex="-1" aria-labelledby="detalleModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-xl modal-dialog-centered">
         <div class="modal-content">
@@ -248,16 +269,28 @@
                                 <h5 class="fw-bold text-muted mb-4">Clasificación</h5>
                                 <ul class="list-unstyled mb-0">
                                     <li class="mb-3">
+                                        <div class="small text-muted text-uppercase">Tipo Canal</div>
+                                        <div class="fw-medium" id="md-tipocanal"></div>
+                                    </li>
+                                    <li class="mb-3">
                                         <div class="small text-muted text-uppercase">Segmento</div>
                                         <div class="fw-medium" id="md-segmento"></div>
+                                    </li>
+                                    <li class="mb-3">
+                                        <div class="small text-muted text-uppercase">Segmento II</div>
+                                        <div class="fw-medium" id="md-segmentoii"></div>
                                     </li>
                                     <li class="mb-3">
                                         <div class="small text-muted text-uppercase">Tipificación</div>
                                         <div class="fw-medium" id="md-tipificacion"></div>
                                     </li>
-                                    <li class="mb-0">
+                                    <li class="mb-3">
                                         <div class="small text-muted text-uppercase">Categoría</div>
                                         <div class="fw-medium" id="md-categoria"></div>
+                                    </li>
+                                    <li class="mb-0">
+                                        <div class="small text-muted text-uppercase">¿Cuál otro delito?</div>
+                                        <div class="fw-medium" id="md-cual_otro_delito"></div>
                                     </li>
                                 </ul>
                             </div>
@@ -302,7 +335,8 @@ document.addEventListener('DOMContentLoaded', function () {
             'fecha', 'tipo', 'documento', 'nombre',
             'correo', 'telefono', 'pais', 'ciudad', 
             'direccion', 'conversacion_id', 'usuario',
-            'segmento', 'tipificacion', 'categoria', 'observacion'
+            'tipocanal', 'segmento', 'segmentoii', 'tipificacion', 
+            'categoria', 'observacion', 'cual_otro_delito'
         ];
         
         campos.forEach(function (field) {
@@ -348,43 +382,5 @@ document.addEventListener('DOMContentLoaded', function () {
         border-radius: 12px;
     }
 </style>
-
-<style>
-    .observation-scroll {
-        overflow-y: auto;
-        max-height: 300px;
-        padding-right: 10px;
-        border-radius: 8px;
-    }
-    
-    /* Scrollbar personalizada para todas las opciones */
-    .observation-scroll {
-        scrollbar-width: thin;
-        scrollbar-color: #d1d5db transparent;
-    }
-    
-    .observation-scroll::-webkit-scrollbar {
-        width: 8px;
-    }
-    
-    .observation-scroll::-webkit-scrollbar-thumb {
-        background-color: #d1d5db;
-        border-radius: 4px;
-    }
-    
-    .observation-scroll::-webkit-scrollbar-track {
-        background: transparent;
-    }
-    
-    .pre-line {
-        white-space: pre-line;
-        line-height: 1.6;
-    }
-    
-    .card {
-        border-radius: 12px;
-    }
-</style>
-
 
 {% endblock %}

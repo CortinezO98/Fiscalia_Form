@@ -1,66 +1,109 @@
 segmentos = [
+    # CHAT
     {
-        "id":1,
-        "nombre":"Nivel 1"
+        "id": 1,
+        "nombre": "Chat",
+        "tipo_canal_id": 1,  # CHAT
+        "tiene_segmento_ii": False
+    },
+    
+    # SMS
+    {
+        "id": 2,
+        "nombre": "SMS",
+        "tipo_canal_id": 2,  # SMS
+        "tiene_segmento_ii": False
+    },
+    
+    # INBOUND
+    {
+        "id": 3,
+        "nombre": "NIVEL I",
+        "tipo_canal_id": 3,  # INBOUND
+        "tiene_segmento_ii": False
     },
     {
-        "id":2,
-        "nombre":"Nivel 1 / Creación de denuncias"
+        "id": 4,
+        "nombre": "NIVEL II",
+        "tipo_canal_id": 3,  # INBOUND
+        "tiene_segmento_ii": False
     },
     {
-        "id":3,
-        "nombre":"Nivel 2"
+        "id": 5,
+        "nombre": "BILINGÜE",
+        "tipo_canal_id": 3,  # INBOUND
+        "tiene_segmento_ii": True  # Necesita Segmento II
     },
     {
-        "id":4,
-        "nombre":"Click to call"
+        "id": 6,
+        "nombre": "PSICOLOGIA",
+        "tipo_canal_id": 3,  # INBOUND
+        "tiene_segmento_ii": True  # Necesita Segmento II
+    },
+    
+    # OUTBOUND
+    {
+        "id": 7,
+        "nombre": "NIVEL I",
+        "tipo_canal_id": 4,  # OUTBOUND
+        "tiene_segmento_ii": False
     },
     {
-        "id":5,
-        "nombre":"Videollamada"
+        "id": 8,
+        "nombre": "NIVEL II",
+        "tipo_canal_id": 4,  # OUTBOUND
+        "tiene_segmento_ii": False
     },
     {
-        "id":6,
-        "nombre":"Lengua de señas"
+        "id": 9,
+        "nombre": "BILINGÜE",
+        "tipo_canal_id": 4,  # OUTBOUND
+        "tiene_segmento_ii": True
     },
     {
-        "id":7,
-        "nombre":"Psicologo"
+        "id": 10,
+        "nombre": "PSICOLOGIA",
+        "tipo_canal_id": 4,  # OUTBOUND
+        "tiene_segmento_ii": True
+    },
+    
+    # VIRTUAL HOLD
+    {
+        "id": 11,
+        "nombre": "NIVEL I",
+        "tipo_canal_id": 5,  # VIRTUAL HOLD
+        "tiene_segmento_ii": False
     },
     {
-        "id":8,
-        "nombre":"Call Back"
+        "id": 12,
+        "nombre": "NIVEL II",
+        "tipo_canal_id": 5,  # VIRTUAL HOLD
+        "tiene_segmento_ii": False
     },
     {
-        "id":9,
-        "nombre":"Chat"
+        "id": 13,
+        "nombre": "BILINGÜE",
+        "tipo_canal_id": 5,  # VIRTUAL HOLD
+        "tiene_segmento_ii": True
     },
     {
-        "id":10,
-        "nombre":"Chat SMS"
+        "id": 14,
+        "nombre": "PSICOLOGIA",
+        "tipo_canal_id": 5,  # VIRTUAL HOLD
+        "tiene_segmento_ii": True
+    },
+    
+    # VIDEO LLAMADA
+    {
+        "id": 15,
+        "nombre": "PERSONA OYENTE",
+        "tipo_canal_id": 6,  # VIDEO LLAMADA
+        "tiene_segmento_ii": False
     },
     {
-        "id":11,
-        "nombre":"PQRS (Opción 3)"
-    },
-    {
-        "id":12,
-        "nombre":"Orientación información y consultas (Opc 4 IVR)"
-    },
-    {
-        "id":13,
-        "nombre":"Anónimas (Opc 2.2 IVR)"
-    },
-    {
-        "id":14,
-        "nombre":"Bilingüe Español"
-    },
-    {
-        "id":15,
-        "nombre":"Bilingüe Ingles"
-    },
-    {
-        "id":16,
-        "nombre":"Consulta jurídica"
+        "id": 16,
+        "nombre": "PERSONA NO OYENTE",
+        "tipo_canal_id": 6,  # VIDEO LLAMADA
+        "tiene_segmento_ii": False
     }
 ]
